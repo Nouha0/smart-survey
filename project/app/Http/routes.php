@@ -24,6 +24,7 @@ Route::group(['prefix'=>'projets','middleware' => ['web']], function () {
     Route::get('/formulaire/{id}',['as'=>'formulaire','uses'=>'ProjetsController@show']);
     Route::put('/put-formulaire',['as'=>'put-formulaire','uses'=>'ProjetsController@put']);
     Route::get('/select-formulaire',['as'=>'select-formulaire','uses'=>'ProjetsController@show']);
+    Route::get('/all-projet',['as'=>'all-projet','uses'=>'ProjetsController@affiche']);
 
 
 });
@@ -42,6 +43,7 @@ Route::group(['prefix'=>'enqueteurs','middleware'=>['web']],function(){
     Route::put('/update-enqueteur/{id}',['as'=>'update-enqueteur','uses'=>'EnqueteursController@update']);
     Route::post('/delete-enqueteur',['as'=>'delete-enqueteur','uses'=>'EnqueteursController@destroy']);
     Route::get('/edit-enqueteur/{id}',['as'=>'edit-enqueteur','uses'=>'EnqueteursController@edit'] );
+    Route::get('/html/{id}',['as'=>'html','uses'=>'EnqueteursController@html']);
 });
 //group of administrateur
 Route::group(['prefix'=>'administrateur','middleware'=>['web']],function(){

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Schema as Schema;
 
 use App\Projet;
 use App\Client;
@@ -39,6 +40,8 @@ class ProjetsController extends Controller
         $projet->nom = $request->nom;
         $projet->projet_start = $request->projet_start;
         $projet->projet_end = $request->projet_end;
+        $projet->nombre_max = $request->nombre_max;
+        //$projet->reponses_table = $request->reponses_table;
         
         return $projet;
     }
@@ -58,6 +61,7 @@ class ProjetsController extends Controller
         $projet->clients()->attach($request->clients);
         $projet->enqueteurs()->attach($request->enqueteurs);
         $projet->administrateurs()->attach($request->administrateurs);
+        //$projet = $this->createTable($project->name,$request->reponses_table);
         
         return view('formulaire', compact('projet'));
     }
@@ -85,7 +89,11 @@ class ProjetsController extends Controller
     {
         $projet = Projet::findOrFail($id);
         
-        return view('edit-projet', compact(['projet']));
+        $clients = Client::lists('nom', 'id');
+        $enqueteurs = Enqueteur::lists('nom','id');
+        $administrateurs = Administrateur::lists('nom','id');
+        
+        return view('edit-projet', compact(['projet','clients','enqueteurs','administrateurs']));
     }
 
     /**
@@ -97,9 +105,14 @@ class ProjetsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Projet::where('id',$id)->update(['nom'=> $request->nom]);
         
-        return redirect(route('affiche-projet'));
+        Projet::where('id',$id)->update(['nom'=> $request->nom,'nombre_max'=>$request->nombre_max]);
+        
+        //Projet::find($id)->enqueteurs()->updateExistingPivot($enqueteurs->id, ['nom'=>$request->enqueteur]);
+        //Projet::find($id)->clients()->updateExistingPivot($clients->id, ['nom'=>$request->client]);
+        //Projet::find($id)->administrateurs()->updateExistingPivot($administrateurs->id, ['nom'=>$request->administrateur]);
+        
+        return redirect(route('all-projet'));
     }
 
     /**
@@ -130,4 +143,31 @@ class ProjetsController extends Controller
         
         return redirect()->back();
     }
+    
+
+
+
+    public function createTable($table_nom,$champs=array() ){
+        
+        Schema::create($table_nom, function ($table) {
+            $table->increments('id');
+            foreach($champs as $ch){
+                $table->text($ch)->nullable();  
+            }
+            $table->timestamps();
+        });
+    }
+    
+    public function affiche(){
+        
+        $projets = Projet::all();
+        $clients = Client::lists('nom', 'id');
+        $enqueteurs = Enqueteur::lists('nom','id');
+        $administrateurs = Administrateur::lists('nom','id');
+        return view('all-projet', compact(['projets', 'clients','enqueteurs','administrateurs']));
+        
+    }
+    
+    
+
 }

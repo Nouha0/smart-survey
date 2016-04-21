@@ -191,9 +191,9 @@
             </li>
 
             <li>
-                <a  href="">              
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                    <span>Formulaire</span> 
+                <a  href="{{route('all-projet')}}">              
+                   <i class="fa fa-eye" aria-hidden="true"></i>
+                    <span>Tous les projets</span> 
                 </a>
             </li>
 

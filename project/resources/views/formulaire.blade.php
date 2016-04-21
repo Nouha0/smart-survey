@@ -30,9 +30,10 @@
         $(function(){
           fb = new Formbuilder({
             selector: '.fb-main',
+            @if(isset($projet->projet_html) && !empty($projet->projet_html))
             bootstrapData:{!! $projet->projet_html !!}.fields
                     
-            
+            @endif
           });
 
           fb.on('save', function(payload){
@@ -40,6 +41,6 @@
             $('.form-json').val(payload);
           })
         });
-        console.log( <?= $projet->projet_html; ?>.fields)
+        
       </script>
 @endsection

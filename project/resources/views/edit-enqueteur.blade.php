@@ -15,14 +15,17 @@
 
                     {!! Form::label('', 'mail') !!}
                     {!! Form::text('mail', null,['placeholder'=>'mail', 'class'=>'form-control'] ) !!}
-                        
+                    
+                    {!! Form::label('', 'Projets') !!}
+                    {!! Form::select('projets[]',$projets,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
+
                 </div>
                 <div class="col-md-4">
                     {!! Form::file('photo',null,['placeholder'=>'browse','class'=>'form-control']) !!}
                 </div>
             </div>
                 <br/>
-                <button type='submit'>modifier</button>            
+                <button class="btn btn-success " type='submit'>modifier</button>            
             {!!  Form::close() !!}
         </div>
     </div>

@@ -18,7 +18,7 @@ class CreateProjetsTable extends Migration
             $table->date('projet_start');
             $table->string('reponses_table');
             $table->text('projet_html');
-            $table->string('table_nom');
+            $table->integer('nombre_max');
             $table->text('list_champs');
             /*$table->integer('created_by')->unsigned();
             $table->foreign('created_by')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');*/

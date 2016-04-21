@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 
 use App\Enqueteur;
+use App\Projet;
 
 class EnqueteursController extends Controller
 {
@@ -18,8 +19,9 @@ class EnqueteursController extends Controller
     public function index()
     {
         $enqueteurs = Enqueteur::all();
+        $projets = Projet::Lists('nom','id');
         
-        return view('enqueteur',compact(['enqueteurs']));
+        return view('enqueteur',compact(['enqueteurs','projets']));
     }
 
     /**
@@ -51,7 +53,8 @@ class EnqueteursController extends Controller
         $enqueteurs = $this->create($request);
         
         $enqueteurs->save();
-     
+        
+        $enqueteurs->projets()->attach($request->projets);
         
         return redirect(route('affiche-enqueteur')) ; 
     }
@@ -79,7 +82,9 @@ class EnqueteursController extends Controller
     {
         $enqueteurs = Enqueteur::findOrFail($id);
         
-        return view('edit-enqueteur', compact(['enqueteurs']));
+        $projets = Projet::Lists('nom','id');
+        
+        return view('edit-enqueteur', compact(['enqueteurs','projets']));
     }
 
     /**
@@ -111,5 +116,23 @@ class EnqueteursController extends Controller
         $enqueteurs->delete();
         
         return redirect(route('affiche-enqueteur'));
+    }
+    
+    public function html($id){
+        
+        $enqueteur = Enqueteur::findOrFail($id)->get();
+        
+        
+        $projet = $enqueteur->projet();
+        dd($projet);
+        $html = $projet[0]->projet_html;
+        
+       
+        $json = json_decode($html);
+        
+        
+        
+        return view('html',$json);
+                 
     }
 }

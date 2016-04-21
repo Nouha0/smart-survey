@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 
 use App\Client;
+use App\Projet;
 
 class clientsController extends Controller
 {
@@ -18,8 +19,9 @@ class clientsController extends Controller
     public function index()
     {
         $clients = Client::all();
+        $projets = Projet::Lists('nom','id');
         
-        return view('client', compact(['clients']));
+        return view('client', compact(['clients','projets']));
     }
 
     /**
@@ -49,9 +51,13 @@ class clientsController extends Controller
     {
         
         $client = $this->create($request);
+        
+        $client->save();
+        
+        $client->projets()->attach($request->projets);
        
         //$client->firstOrCreate(['mail'=> $request->mail]);
-        $client->save();
+       
         
         return redirect(route('affiche-client'));
     }

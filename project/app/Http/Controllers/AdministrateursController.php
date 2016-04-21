@@ -8,6 +8,8 @@ use App\Http\Requests;
 
 use App\Administrateur;
 
+use App\Projet;
+
 class AdministrateursController extends Controller
 {
     /**
@@ -19,7 +21,9 @@ class AdministrateursController extends Controller
     {
         $administrateurs = Administrateur::all();
         
-        return view('administrateur',  compact('administrateurs'));
+        $projets = Projet::Lists('nom','id');
+        
+        return view('administrateur',  compact(['administrateurs','projets']));
     }
 
     /**
@@ -48,8 +52,12 @@ class AdministrateursController extends Controller
     {
         $administrateurs = $this->create($request);
         
-        //$administrateurs->firstOrCreate(['mail'=> $request->mail]);
         $administrateurs->save();
+        
+        $administrateurs->projets()->attach($request->projets);
+        
+        //$administrateurs->firstOrCreate(['mail'=> $request->mail]);
+        
         
         return redirect(route('affiche-administrateur'));
     }
@@ -76,6 +84,7 @@ class AdministrateursController extends Controller
     public function edit($id)
     {
         $administrateur = Administrateur::findOrFail($id);
+        
     
         return view('edit-administrateur', compact(['administrateur']));
     }

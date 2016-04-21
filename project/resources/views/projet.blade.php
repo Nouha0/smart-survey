@@ -6,28 +6,35 @@
 <div class=''>
     <div class="row">
         <div class="col-md-6">
-    {!! Form::open(['method'=>'POST','url'=>route('add-projet')])  !!}
-    <div class="form-group">
-                {!! Form::label('', 'Projet Nom') !!}
-                {!! Form::text('nom', null,['placeholder'=>'nom du projet', 'class'=>'form-control'] ) !!}
-    </div>
-     <div class="form-group">
-       
-                {!! Form::label('', 'Clients') !!}
-                {!! Form::select('clients[]', $clients,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
-           
-    </div>
-    <div class="form-group">
-        
-                {!! Form::label('', 'Enqueteurs') !!}
-                {!! Form::select('enqueteurs[]', $enqueteurs,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
-          
-    </div>
-    <div class="form-group">
-       
-                {!! Form::label('', 'Administrateurs') !!}
-                {!! Form::select('administrateurs[]', $administrateurs,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
-        
+            {!! Form::open(['method'=>'POST','url'=>route('add-projet')])  !!}
+            <div class="form-group">
+                        {!! Form::label('', 'Projet Nom') !!}
+                        {!! Form::text('nom', null,['placeholder'=>'nom du projet', 'class'=>'form-control'] ) !!}
+            </div>
+             <div class="form-group">
+
+                        {!! Form::label('', 'Clients') !!}
+                        {!! Form::select('clients[]', $clients,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
+
+            </div>
+            <div class="form-group">
+
+                        {!! Form::label('', 'Enqueteurs') !!}
+                        {!! Form::select('enqueteurs[]', $enqueteurs,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
+
+            </div>
+            <div class="form-group">
+
+                        {!! Form::label('', 'Administrateurs') !!}
+                        {!! Form::select('administrateurs[]', $administrateurs,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
+
+            </div>
+        </div>
+        <div class="col-md-6">
+            {!! Form::label('', 'Nombre max d\'envoie') !!}
+            {!! Form::text('nombre_max',null,['placehorlder'=>'Nombre max','class'=>'form-control']) !!}
+
+        </div>
     </div>
     <div class='form-group'>
         <div class='row'>
@@ -46,13 +53,14 @@
         </div>
     </div>
     <br />
-    <button  type='submit'>envoyer</button>
+    <button  type='submit' class="btn btn-success ">envoyer</button>
     
    {!! Form::close() !!} 
-    </div>
+</div>
+<br />
 <div class="col-md-12">
             <div class="panel panel-default">
-                <div class="panel-heading"><strong>New Orders</strong> <a href="#" class="pull-right">View all</a></div>
+                <div class="panel-heading"><strong>Nouveau projet</strong> <a href="#" class="pull-right">View all</a></div>
                 <div class="panel-body no-padding">
 
                     <div class="table-responsive">
@@ -60,10 +68,12 @@
                     <thead>
                     <tr>
                         <th>Nom</th>
-                        <th>Full name</th>
-                        <th class="purchased">Purchased</th>
-                        <th>Status</th>
-                        <th class="text-right"></th>
+                        <th>Date de création</th>
+                        <th class="purchased">date de fin</th>
+                        <th>Nb d'envoie</th>
+                        <th>Clients</th>
+                        <th class="">enqueteurs</th>
+                        <th>Administrateurs</th>
                     </tr>
                     </thead>
 
@@ -73,6 +83,7 @@
             <td>{{$projet->nom}}</td> 
             <td>{{$projet->projet_start}} </td>
             <td>{{$projet->projet_end}} </td>
+            <td>{{$projet->nombre_max}} </td>
             <td>
                 @foreach($projet->clients()->get() as $client)
                     {{$client->nom}} -
@@ -90,7 +101,7 @@
               </td>
              <td>
                  <a  data-toggle="tooltip" data-placement="top" title="modifier le formulaire" href="{{route('formulaire',$projet->id )}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-database" aria-hidden="true"></i>
-</a>
+</a>            
             <a href="{{route('edit-projet', $projet->id)}}" class="btn btn-success btn-xs pull-left"  data-toggle="tooltip" data-placement="top" title="Modifier le projet"><i class="fa fa-pencil-square" aria-hidden="true"></i>
 </a>
             
