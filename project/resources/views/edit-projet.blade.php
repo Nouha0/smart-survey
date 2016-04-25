@@ -19,9 +19,21 @@
                         {!! Form::select('clients[]',$clients,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
 
             </div>
-            <div class="form-group">
+            <!--<div class="form-group">
 
                         {!! Form::label('', 'Enqueteurs') !!}
+                        @foreach($projet->enqueteurs()->get() as $enqueteur)
+                        <p>  
+                            {{$enqueteur->nom}} 
+                            {!! Form::open(['method'=>'POST','url'=>route('delete-enqueteur'), 'class'=>'pull-left'])  !!}
+                  
+                                {!! Form::hidden('id',$enqueteur->id) !!} <button class="btn btn-danger btn-xs">supprimer</button> 
+                            {!! Form::close() !!}
+                            @endforeach
+                        </p>
+            </div>-->
+            <div class="form-group">
+                         {!! Form::label('', 'Nouveaux Enqueteurs') !!}
                         {!! Form::select('enqueteurs[]',$enqueteurs,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
 
             </div>

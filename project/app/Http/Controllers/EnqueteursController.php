@@ -94,11 +94,35 @@ class EnqueteursController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+   public function update(Request $request, $id)
     {
-        Enqueteur::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
+       Enqueteur::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
+       
+       Enqueteur::find($id)->projets()->detach(['projets'=>$request->projets]);
+       
+       Enqueteur::find($id)->projets()->attach([$request->projets]);
+       
+       /* Enqueteur::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
         
+        $enqueteur = Enqueteur::find($id);
+        
+        foreach($request->projets as $projet){
+            $projet->projets()->attach([$id]);
+        }
+        
+        *         
+
+        */
         return redirect(route('affiche-enqueteur'));
+        
+    }
+    
+    public function deleteLiaison(Request $request){
+         
+       
+        Enqueteur::find($id)->projets()->detach(['projets'=>$request->projets]);
+         
+        return redirect(route('edit-enqueteur'));
     }
 
     /**

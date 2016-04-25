@@ -1,10 +1,11 @@
 @extends('Default')
 
-@section('title','Ajouter enqueteur')
+@section('title','Ajouter enqueteurs')
 
 @section('content')
-<div class="">
-    {!! Form::open(['method'=>'POST','url'=>route('add-enqueteur'),'files'=>true]) !!}
+
+<div class="container">
+   {!! Form::open(['method'=>'POST','url'=>route('add-enqueteur'),'files'=>true]) !!}
     <div class="form-group">
         <div class="row">
             <div class="col-md-8">
@@ -37,10 +38,10 @@
     <br />
     <button  type='submit' class="btn btn-success ">envoyer</button>
     {!!  Form::close() !!}
-    <br />
+     <br />
     <div class="col-md-8">
             <div class="panel panel-default">
-                <div class="panel-heading"><strong>Enqueteurs</strong> <a href="#" class="pull-right">View all</a></div>
+                <div class="panel-heading"><strong>Clients</strong> <a href="#" class="pull-right">View all</a></div>
                 <div class="panel-body no-padding">
 
                     <div class="table-responsive">
@@ -49,8 +50,8 @@
                     <tr>
                         <th>Nom</th>
                         <th>mail</th>
-                        <th>photo</th>
-                        <th class="purchased">Projet</th>
+                        <th class="purchased">photo</th>
+                        <th>projet</th>
                     </tr>
                     </thead>
 
@@ -59,16 +60,16 @@
         <tr>
             <td>{{$enqueteur->nom}}</td> 
             <td>{{$enqueteur->mail}} </td>
-            <td>{{$enqueteur->photo}}</td>
+            <td>{{$enqueteur->photo}} </td>
             <td>
                 @foreach($enqueteur->projets()->get() as $projet)
                     {{$projet->nom}} -
                 @endforeach
               </td>
              <td>
-                 <a  data-toggle="tooltip" data-placement="top" title="voir le formulaire" href="{{route('html',$enqueteur->id)}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-eye" aria-hidden="true"></i>
-</a>            
-            <a href="{{route('edit-enqueteur', $enqueteur->id)}}" class="btn btn-success btn-xs pull-left"  data-toggle="tooltip" data-placement="top" title="Modifier l'enqueteur"><i class="fa fa-pencil-square" aria-hidden="true"></i>
+                 <a  data-toggle="tooltip" data-placement="top" title="voir les formulaires" href="" class="btn btn-info btn-xs pull-left"><i class="fa fa-eye" aria-hidden="true"></i>
+</a>
+            <a href="{{route('edit-enqueteur', $enqueteur->id)}}" class="btn btn-success btn-xs pull-left"  data-toggle="tooltip" data-placement="top" title="Modifier le enqueteur"><i class="fa fa-pencil-square" aria-hidden="true"></i>
 </a>
             
             {!! Form::open(['method'=>'POST','url'=>route('delete-enqueteur'), 'class'=>'pull-left'])  !!}
@@ -92,5 +93,7 @@
             </div>
             </div>
             </div>
+
+    
 </div>
 @stop

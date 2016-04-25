@@ -3,31 +3,69 @@
 @section('title','Editer')
 
 @section('content')
-
-    <div class="container">
-        <div class="form-group">
-            {!! Form::model($enqueteurs, ['method'=>'PUT','url'=>route('update-enqueteur',$enqueteurs->id)])  !!}
-            <div class="row">
-                <div class="col-md-8">
+<div class='form-group'>
+    
+    <div class="row">
+        <div class="col-md-12">
+    {!! Form::model($enqueteurs, ['method'=>'PUT','url'=>route('update-enqueteur',$enqueteurs->id)])  !!}      
+       <div class="form-group">
+          
+                        {!! Form::label('', 'Nom') !!}
+                        {!! Form::text('nom', null,['placeholder'=>'nom', 'class'=>'form-control'] ) !!}
+                        
                     
-                    {!! Form::label('', 'nom') !!}
-                    {!! Form::text('nom', null,['placeholder'=>'nom', 'class'=>'form-control'] ) !!}
-
-                    {!! Form::label('', 'mail') !!}
-                    {!! Form::text('mail', null,['placeholder'=>'mail', 'class'=>'form-control'] ) !!}
-                    
-                    {!! Form::label('', 'Projets') !!}
-                    {!! Form::select('projets[]',$projets,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
-
-                </div>
-                <div class="col-md-4">
-                    {!! Form::file('photo',null,['placeholder'=>'browse','class'=>'form-control']) !!}
-                </div>
+                        {!! Form::file('photo',null,['class'=>'form-control']) !!}
             </div>
-                <br/>
-                <button class="btn btn-success " type='submit'>modifier</button>            
-            {!!  Form::close() !!}
-        </div>
-    </div>
+             <div class="form-group">
 
-@stop
+                        {!! Form::label('', 'Mail') !!}
+                        {!! Form::text('mail', null,['placeholder'=>'mail', 'class'=>'form-control'] ) !!}
+
+            </div>
+            <div class="form-group">
+                    {!! Form::label('', 'Projets selectionnés') !!}
+                    <ul>
+                    @foreach($enqueteurs->projets()->get() as $projet)
+                    
+                    <li>{{$projet->nom}}   <a href="{{route('delete-liaison',projet->id)}}" data-id="{{projet->id}}" class="btn btn-danger btn-xs">X</a></li>
+                    @endforeach
+                    </ul>
+            </div>
+            <div class="form-group">
+                         {!! Form::label('', 'Projets') !!}
+                        {!! Form::select('projets[]',$projets,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
+
+            </div>
+            
+            <br/>
+            <button class='btn btn-success pull-right' type='submit'>modifier</button>
+            </div>
+    </div>
+        
+    {!! Form::close() !!}
+</div>
+@endsection
+@section('js')
+<script>
+    $('a').on('click','.suppOp',function (e){
+    e.preventDefault();
+     
+    var id=$(this).attr('data-id');
+    var Route=suppOpRoute+id;
+    var res= $(this).parent();
+   
+    $.ajax({
+        url: Route,
+        type: 'GET',
+        data: '',
+        dataType: 'text',
+        success: function(response) {
+           res.parent().remove();                  
+       
+        },
+        fail: function(response) {
+        }
+    });
+});
+</script>
+@endsection

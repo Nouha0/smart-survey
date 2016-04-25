@@ -21,7 +21,7 @@
     {!! Html::style('project/resources/assets/css/font-awesome/css/font-awesome.min.css') !!}
     {!! Html::style('project/resources/assets/dist/css/form.css') !!}
     {!! Html::style('project/resources/assets/dist/css/bootstrap-wysihtml5.css') !!}
-    @yield('css')
+    
     
 
 

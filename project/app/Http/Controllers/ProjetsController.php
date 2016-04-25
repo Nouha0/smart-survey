@@ -91,6 +91,12 @@ class ProjetsController extends Controller
         
         $clients = Client::lists('nom', 'id');
         $enqueteurs = Enqueteur::lists('nom','id');
+        /*foreach ($enqueteurs as $enqueteur){
+            $enqueteur = json_decode($enqueteur);
+           
+        }*/
+            
+        
         $administrateurs = Administrateur::lists('nom','id');
         
         return view('edit-projet', compact(['projet','clients','enqueteurs','administrateurs']));
@@ -107,8 +113,10 @@ class ProjetsController extends Controller
     {
         
         Projet::where('id',$id)->update(['nom'=> $request->nom,'nombre_max'=>$request->nombre_max]);
+        dd($request->enqueteurs);
+        Projet::find($id)->enqueteurs()->delete();
+        $this->enqueteurs()->attach($request->enqueteurs);
         
-        //Projet::find($id)->enqueteurs()->updateExistingPivot($enqueteurs->id, ['nom'=>$request->enqueteur]);
         //Projet::find($id)->clients()->updateExistingPivot($clients->id, ['nom'=>$request->client]);
         //Projet::find($id)->administrateurs()->updateExistingPivot($administrateurs->id, ['nom'=>$request->administrateur]);
         
