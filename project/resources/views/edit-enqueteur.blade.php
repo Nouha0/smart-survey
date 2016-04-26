@@ -27,7 +27,7 @@
                     <ul>
                     @foreach($enqueteurs->projets()->get() as $projet)
                     
-                    <li>{{$projet->nom}}   <a href="{{route('delete-liaison',projet->id)}}" data-id="{{projet->id}}" class="btn btn-danger btn-xs">X</a></li>
+                    <li>{{$projet->nom}}   <button data-id="{{$projet->id}}" class="btn btn-danger btn-xs supp-projet">X</button></li>
                     @endforeach
                     </ul>
             </div>
@@ -47,11 +47,15 @@
 @endsection
 @section('js')
 <script>
-    $('a').on('click','.suppOp',function (e){
+    var supp_projetRoute="{{route('delete-liaison',array(11,0))}}";
+    supp_projetRoute = supp_projetRoute.slice(0, - 1);
+    
+    $('.supp-projet').on('click',function (e){
     e.preventDefault();
      
     var id=$(this).attr('data-id');
-    var Route=suppOpRoute+id;
+    console.log(id);
+    var Route=supp_projetRoute+id;
     var res= $(this).parent();
    
     $.ajax({
@@ -60,10 +64,12 @@
         data: '',
         dataType: 'text',
         success: function(response) {
-           res.parent().remove();                  
+           console.log('oui');
+           res.remove();                  
        
         },
         fail: function(response) {
+            console.log('non')
         }
     });
 });

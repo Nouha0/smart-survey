@@ -44,7 +44,7 @@ Route::group(['prefix'=>'enqueteurs','middleware'=>['web']],function(){
     Route::post('/delete-enqueteur',['as'=>'delete-enqueteur','uses'=>'EnqueteursController@destroy']);
     Route::get('/edit-enqueteur/{id}',['as'=>'edit-enqueteur','uses'=>'EnqueteursController@edit'] );
     Route::get('/html/{id}',['as'=>'html','uses'=>'EnqueteursController@html']);
-    Route::post('delete-liaison/{id}',['as'=>'delete-liaison','uses'=>'EnqueteursController@deleteLiaison']);
+    Route::get('delete-liaison/{id}/{id2}',['as'=>'delete-liaison','uses'=>'EnqueteursController@deleteLiaison']);
 });
 //group of administrateur
 Route::group(['prefix'=>'administrateur','middleware'=>['web']],function(){
