@@ -79,12 +79,29 @@ class EnqueteursController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
+    {  
+        $tab=array();
+        $tabl = array();
+        $tableau=array();
+        $x=Projet::all();
         $enqueteurs = Enqueteur::findOrFail($id);
         
-        $projets = Projet::Lists('nom','id');
+        foreach ($enqueteurs->projets()->get() as $p)
+        {
+            $tab[$p->id]=$p->nom;              
+        }
         
-        return view('edit-enqueteur', compact(['enqueteurs','projets']));
+        $enq_proj = $tab;
+        
+        foreach ($x as $pr)
+        {
+            $tabl[$pr->id]=$pr->nom;
+                      
+        }
+       
+        $projets=$tabl;
+        
+        return view('edit-enqueteur', compact(['enqueteurs','projets','enq_proj','tableau']));
     }
 
     /**
@@ -96,17 +113,22 @@ class EnqueteursController extends Controller
      */
    public function update(Request $request, $id)
     {
-      
-        Enqueteur::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
+        
+        $en=Enqueteur::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
        
         
-         
-        Enqueteur::find($id)->projets()->attach([$request->projets]);
+        
+         if(isset($request->projets))
+         {  
+             foreach($request->projets as $projet){
+              
+                  Enqueteur::find($id)->projets()->attach([$projet]);
+             }
+            
+         }
         
        
-        
-       
-        return redirect(route('affiche-enqueteur'));
+        return redirect(route('all-enqueteur'));
         
     }
     
@@ -132,24 +154,38 @@ class EnqueteursController extends Controller
         
         $enqueteurs->delete();
         
-        return redirect(route('affiche-enqueteur'));
+        return redirect(route('all-enqueteur'));
     }
     
     public function html($id){
         
-        $enqueteur = Enqueteur::findOrFail($id)->get();
+        $projet = Projet::findOrFail($id);
         
         
-        $projet = $enqueteur->projet();
-        dd($projet);
-        $html = $projet[0]->projet_html;
+        
+        
+        $html = $projet->projet_html;
         
        
         $json = json_decode($html);
+       
         
         
-        
-        return view('html',$json);
+        return view('html',  compact('json'));
                  
+    }
+    
+    public function affiche(){
+        
+        $projets = Projet::lists('nom','id');
+        $enqueteurs = Enqueteur::all();
+        return view('all-enqueteur', compact(['projets','enqueteurs']));
+        
+    }
+    
+    public function liste_projet($id){
+        $projet = Enqueteur::find($id)->projets()->get();
+        
+        return view('liste-projet',  compact(['projet']));
     }
 }

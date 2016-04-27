@@ -83,9 +83,28 @@ class clientsController extends Controller
      */
     public function edit($id)
     {
+        $tab=array();
+        $tabl = array();
+        $tableau=array();
+        $x=Projet::all();
         $clients = Client::findOrFail($id);
         
-        return view('edit-client', compact(['clients']));
+        foreach ($clients->projets()->get() as $p)
+        {
+            $tab[$p->id]=$p->nom;              
+        }
+        
+        $client_proj = $tab;
+        
+        foreach ($x as $pr)
+        {
+            $tabl[$pr->id]=$pr->nom;
+                      
+        }
+       
+        $projets=$tabl;
+        
+        return view('edit-client', compact(['clients','projets','client_proj','tableau']));
     }
 
     /**
@@ -99,7 +118,24 @@ class clientsController extends Controller
     {
         client::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
         
-        return redirect(route('affiche-client')); 
+         if(isset($request->projets))
+         {  
+             foreach($request->projets as $projet){
+              
+                  Client::find($id)->projets()->attach([$projet]);
+             }
+            
+         }
+        
+        return redirect(route('all-client')); 
+    }
+    
+    public function deleteLiaison($id,$id2){
+         
+       
+        Client::find($id)->projets()->detach([$id2]);
+         
+        return 'true';
     }
 
     /**
@@ -116,6 +152,15 @@ class clientsController extends Controller
         
         $clients->delete();
         
-        return redirect(route('affiche-client'));
+        return redirect(route('all-client'));
+    }
+    
+    public function affiche(){
+        
+       
+        $clients = Client::all();
+        $projets = Projet::Lists('nom','id');
+        
+        return view('all-client', compact(['clients','projets']));
     }
 }

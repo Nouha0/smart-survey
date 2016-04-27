@@ -193,20 +193,21 @@
             <li>
                 <a  href="{{route('all-projet')}}">              
                    <i class="fa fa-eye" aria-hidden="true"></i>
-                    <span>Tous les projets</span> 
+                    <span>Tous les projets</span>
                 </a>
             </li>
 
 
 
             <li>
-                <a class="" href="">              
-                    <i class="fa fa-signal"></i>
-                    <span></span>
+               <a class="dropdown-toggle" href="#">
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                    <span>utilisateurs</span><b class="caret"></b>
                 </a>
                  <ul class="submenu">
-                    <li><a href="flot.html">Flot Chart</a></li>
-                    <li><a href="morris.html">Morris Chart</a></li>
+                    <li><a href="{{route('all-admin')}}">Administrateurs</a></li>
+                    <li><a href="{{route('all-client')}}">Clients</a></li>
+                    <li><a href="{{route('all-enqueteur')}}">Enqueteurs</a></li>
 
                 </ul>
             </li>

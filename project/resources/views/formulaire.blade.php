@@ -8,7 +8,7 @@
 @endsection
 
 @section('content')
-    <div class="container">
+   
         <div class="fb-main">
            
         </div>
@@ -18,9 +18,9 @@
                 {!! Form::hidden('id',$projet->id,[]) !!}
                     
                 <br />
-                <button type="submit">créer le formulaire</button>
+                <button class="btn btn-success" type="submit">créer le formulaire</button>
             {!! Form::close() !!}
-    </div>
+    
 @endsection
 @section('js')
     <script src="{{url('project/resources/assets/plugins/formbuilder/vendor/js/vendor.js')}}"></script>

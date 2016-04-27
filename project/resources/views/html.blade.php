@@ -8,7 +8,7 @@
     
    
    <br />
-   <button type="submit" class="btn btn-success">soumettre</button>
+   <button class="btn btn-success">soumettre</button>
    
 </div>
 @endsection

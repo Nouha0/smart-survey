@@ -83,10 +83,28 @@ class AdministrateursController extends Controller
      */
     public function edit($id)
     {
-        $administrateur = Administrateur::findOrFail($id);
+         $tab=array();
+        $tabl = array();
+        $tableau=array();
+        $x=Projet::all();
+        $administrateurs = Administrateur::findOrFail($id);
         
-    
-        return view('edit-administrateur', compact(['administrateur']));
+        foreach ($administrateurs->projets()->get() as $p)
+        {
+            $tab[$p->id]=$p->nom;              
+        }
+        
+        $adm_proj = $tab;
+        
+        foreach ($x as $pr)
+        {
+            $tabl[$pr->id]=$pr->nom;
+                      
+        }
+       
+        $projets=$tabl;
+        
+        return view('edit-administrateur', compact(['administrateurs','projets','adm_proj','tableau']));
     }
 
     /**
@@ -98,9 +116,26 @@ class AdministrateursController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Administrateur::where('id',$id)->update(['name'=> $request->name,'mail'=> $request->mail]);
+        Administrateur::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
         
-        return redirect(route('affiche-administrateur'));
+        if(isset($request->projets))
+         {  
+             foreach($request->projets as $projet){
+              
+                  Administrateur::find($id)->projets()->attach([$projet]);
+             }
+            
+         }
+        
+        return redirect(route('all-administrateur'));
+    }
+    
+    public function deleteLiaison($id,$id2){
+         
+       
+        Administrateur::find($id)->projets()->detach([$id2]);
+         
+        return 'true';
     }
 
     /**
@@ -117,6 +152,15 @@ class AdministrateursController extends Controller
        
        $administrateurs->delete();
        
-       return redirect(route('affiche-administrateur'));
+       return redirect(route('all-administrateur'));
+    }
+    
+    public function affiche(){
+        
+        $administrateurs = Administrateur::all();
+        $projets = Projet::lists('nom', 'id');
+        
+        return view('all-admin', compact(['administrateurs', 'projets']));
+        
     }
 }

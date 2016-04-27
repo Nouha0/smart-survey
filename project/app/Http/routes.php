@@ -25,6 +25,7 @@ Route::group(['prefix'=>'projets','middleware' => ['web']], function () {
     Route::put('/put-formulaire',['as'=>'put-formulaire','uses'=>'ProjetsController@put']);
     Route::get('/select-formulaire',['as'=>'select-formulaire','uses'=>'ProjetsController@show']);
     Route::get('/all-projet',['as'=>'all-projet','uses'=>'ProjetsController@affiche']);
+    Route::get('delete-liaisonP/{id}/{id2}',['as'=>'delete-liaisonP','uses'=>'ProjetsController@deleteLiaison']);
 
 
 });
@@ -35,6 +36,8 @@ Route::group(['prefix'=>'clients','middleware'=>['web']],  function (){
     Route::put('/update-client/{id}',['as'=>'update-client','uses'=>'ClientsController@update']);
     Route::post('/delete-client',['as'=>'delete-client','uses'=>'ClientsController@destroy']);
     Route::get('/edit-client/{id}',['as'=>'edit-client','uses'=>'ClientsController@edit'] );
+    Route::get('delete-liaisonC/{id}/{id2}',['as'=>'delete-liaisonC','uses'=>'ClientsController@deleteLiaison']);
+    Route::get('/all-client',['as'=>'all-client','uses'=>'ClientsController@affiche']);
 });
 //group of enqueteurs
 Route::group(['prefix'=>'enqueteurs','middleware'=>['web']],function(){
@@ -44,7 +47,9 @@ Route::group(['prefix'=>'enqueteurs','middleware'=>['web']],function(){
     Route::post('/delete-enqueteur',['as'=>'delete-enqueteur','uses'=>'EnqueteursController@destroy']);
     Route::get('/edit-enqueteur/{id}',['as'=>'edit-enqueteur','uses'=>'EnqueteursController@edit'] );
     Route::get('/html/{id}',['as'=>'html','uses'=>'EnqueteursController@html']);
-    Route::get('delete-liaison/{id}/{id2}',['as'=>'delete-liaison','uses'=>'EnqueteursController@deleteLiaison']);
+    Route::get('delete-liaisonE/{id}/{id2}',['as'=>'delete-liaisonE','uses'=>'EnqueteursController@deleteLiaison']);
+    Route::get('/all-enqueteur',['as'=>'all-enqueteur','uses'=>'EnqueteursController@affiche']);
+    Route::get('liste-projet/{id}',['as'=>'liste-projet','uses'=>'EnqueteursController@liste_projet']);
 });
 //group of administrateur
 Route::group(['prefix'=>'administrateur','middleware'=>['web']],function(){
@@ -53,4 +58,6 @@ Route::group(['prefix'=>'administrateur','middleware'=>['web']],function(){
     Route::put('/update-administrateur/{id}',['as'=>'update-administrateur','uses'=>'AdministrateursController@update']);
     Route::post('/delete-administrateur',['as'=>'delete-administrateur','uses'=>'AdministrateursController@destroy']);
     Route::get('/edit-administrateur/{id}',['as'=>'edit-administrateur','uses'=>'AdministrateursController@edit'] );
+    Route::get('delete-liaisonA/{id}/{id2}',['as'=>'delete-liaisonA','uses'=>'AdministrateursController@deleteLiaison']);
+    Route::get('/all-admin',['as'=>'all-admin','uses'=>'AdministrateursController@affiche']);
 });

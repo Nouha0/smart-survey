@@ -25,18 +25,24 @@
             <div class="form-group">
                     {!! Form::label('', 'Projets selectionnés') !!}
                     <ul>
-                    @foreach($enqueteurs->projets()->get() as $projet)
-                    
-                    <li>{{$projet->nom}}   <button data-id="{{$projet->id}}" class="btn btn-danger btn-xs supp-projet">X</button></li>
-                    @endforeach
+                        @foreach($projets as $key => $projet)
+                            @if(in_array($projet,$enq_proj))
+                                <li>{{$projet}}   <button data-id="{{$key}}" class="btn btn-danger btn-xs supp-projet">X</button></li>
+                            @else
+                                <div class="hidden"> 
+                                    {{$tableau[$key]=$projet}}
+
+                                </div>    
+                             @endif
+                         @endforeach
                     </ul>
             </div>
-            <div class="form-group">
-                         {!! Form::label('', 'Projets') !!}
-                        {!! Form::select('projets[]',$projets,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
-
-            </div>
-            
+            @if(!empty($tableau))
+                <div class="form-group">
+                    {!! Form::label('', 'Projets') !!}
+                    {!! Form::select('projets[]',$tableau,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
+                </div>
+            @endif
             <br/>
             <button class='btn btn-success pull-right' type='submit'>modifier</button>
             </div>
@@ -47,7 +53,7 @@
 @endsection
 @section('js')
 <script>
-    var supp_projetRoute="{{route('delete-liaison',array(11,0))}}";
+    var supp_projetRoute="{{route('delete-liaisonE',array($enqueteurs->id,0))}}";
     supp_projetRoute = supp_projetRoute.slice(0, - 1);
     
     $('.supp-projet').on('click',function (e){

@@ -62,7 +62,7 @@
                 @endforeach
               </td>
              <td>
-                 <a  data-toggle="tooltip" data-placement="top" title="voir les resultats" href="{{route('formulaire',$projet->id )}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-eye" aria-hidden="true"></i>
+                 <a  data-toggle="tooltip" data-placement="top" title="voir les resultats" href="" class="btn btn-info btn-xs pull-left"><i class="fa fa-eye" aria-hidden="true"></i>
 </a>
             <a href="{{route('edit-client', $client->id)}}" class="btn btn-success btn-xs pull-left"  data-toggle="tooltip" data-placement="top" title="Modifier le client"><i class="fa fa-pencil-square" aria-hidden="true"></i>
 </a>

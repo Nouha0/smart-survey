@@ -87,19 +87,61 @@ class ProjetsController extends Controller
      */
     public function edit($id)
     {
-        $projet = Projet::findOrFail($id);
+        $tab=array();
+        $tabl = array();
+        $tableau=array();
+        $tableau1=array();
+        $tableau2=array();
+        $x = Client::all();
+        $y = Enqueteur::all();
+        $z = Administrateur::all();
+        $projets = Projet::findOrFail($id);
+        //clients
+        foreach ($projets->clients()->get() as $c)
+        {
+            $tab[$c->id]=$c->nom;              
+        }
         
-        $clients = Client::lists('nom', 'id');
-        $enqueteurs = Enqueteur::lists('nom','id');
-        /*foreach ($enqueteurs as $enqueteur){
-            $enqueteur = json_decode($enqueteur);
-           
-        }*/
-            
+        $proj_client = $tab;
         
-        $administrateurs = Administrateur::lists('nom','id');
+        foreach ($x as $cl)
+        {
+            $tabl[$cl->id]=$cl->nom;
+                      
+        }
+       
+        $clients=$tabl;
+        //enqueteur
+        foreach ($projets->enqueteurs()->get() as $e)
+        {
+            $tab[$e->id]=$e->nom;              
+        }
         
-        return view('edit-projet', compact(['projet','clients','enqueteurs','administrateurs']));
+        $proj_enq = $tab;
+        
+        foreach ($y as $enq)
+        {
+            $tabl[$enq->id]=$enq->nom;
+                      
+        }
+       
+        $enqueteurs=$tabl;
+        //administrateur
+        foreach ($projets->administrateurs()->get() as $a)
+        {
+            $tab[$a->id]=$a->nom;              
+        }
+        
+        $proj_admin = $tab;
+        
+        foreach ($z as $admin)
+        {
+            $tabl[$admin->id]=$admin->nom;
+                      
+        }
+       
+        $administrateurs=$tabl;
+        return view('edit-projet', compact(['projets','clients','proj_client','tableau','proj_enq','enqueteurs','tableau1','proj_admin','administrateurs','tableau2']));
     }
 
     /**
@@ -113,14 +155,46 @@ class ProjetsController extends Controller
     {
         
         Projet::where('id',$id)->update(['nom'=> $request->nom,'nombre_max'=>$request->nombre_max]);
-        dd($request->enqueteurs);
-        Projet::find($id)->enqueteurs()->delete();
-        $this->enqueteurs()->attach($request->enqueteurs);
         
-        //Projet::find($id)->clients()->updateExistingPivot($clients->id, ['nom'=>$request->client]);
-        //Projet::find($id)->administrateurs()->updateExistingPivot($administrateurs->id, ['nom'=>$request->administrateur]);
-        
+        if(isset($request->clients))
+         {  
+             foreach($request->clients as $client){
+              
+                  Projet::find($id)->clients()->attach([$client]);
+             }
+            
+         }
+         elseif(isset($request->administrateur))
+         {  
+             foreach($request->administrateur as $administrateur){
+              
+                  Projet::find($id)->administrateurs()->attach([$administrateur]);
+             }
+            
+         }
+         else
+         {  
+             foreach($request->enqueteurs as $enqueteur){
+              
+                  Projet::find($id)->enqueteurs()->attach([$enqueteur]);
+             }
+            
+         }
+         
         return redirect(route('all-projet'));
+    }
+    
+    public function deleteLiaison($id,$id2){
+         
+       
+       Projet::find($id)->clients()->detach([$id2]);
+     
+       Projet::find($id)->enqueteurs()->detach([$id2]);
+
+       Projet::find($id)->administrateurs()->detach([$id2]);
+        
+        
+        return 'true';
     }
 
     /**
@@ -137,7 +211,7 @@ class ProjetsController extends Controller
         
         $projets->delete();
         
-        return redirect(route('affiche-projet'));
+        return redirect(route('all-projet'));
     }
     
     public function put (Request $request)
