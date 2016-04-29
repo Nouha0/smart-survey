@@ -3,8 +3,8 @@
 @section('title','création de formulaire')
 
 @section('css')
-    {!! Html::style('project/resources/assets/plugins/formbuilder/dist/formbuilder.css') !!}
     {!! Html::style('project/resources/assets/plugins/formbuilder/vendor/css/vendor.css') !!}
+    {!! Html::style('project/resources/assets/plugins/formbuilder/dist/formbuilder.css') !!}
 @endsection
 
 @section('content')
