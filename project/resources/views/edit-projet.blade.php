@@ -76,6 +76,7 @@
                         @endforeach
                  </ul>
             </div>
+            
             @if(!empty($tableau2))
                 <div class="form-group">
 
@@ -96,15 +97,17 @@
 </div>
 @endsection
 @section('js')
+<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>-->
+
 <script>
+    console.log('wxcvbjk');
     var supp_projetRoute="{{route('delete-liaisonP',array($projets->id,0))}}";
     supp_projetRoute = supp_projetRoute.slice(0, - 1);
-    
-    $('.supp-utilisateur').on('click',function (e){
+     $('.supp-utilisateur').on('click',function (e){
     e.preventDefault();
-     
+      console.log('wxcvbjk');
     var id=$(this).attr('data-id');
-    console.log(id);
+    
     var Route=supp_projetRoute+id;
     var res= $(this).parent();
    
@@ -123,5 +126,6 @@
         }
     });
 });
+   
 </script>
 @endsection

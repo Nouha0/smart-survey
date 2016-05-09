@@ -2,23 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use Illuminate\Support\Facades\Schema as Schema;
-
-use App\Projet;
+use App\Administrateur;
 use App\Client;
 use App\Enqueteur;
-use App\Administrateur;
+use App\Projet;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema as Schema;
+
+
 
 class ProjetsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
+    
     public function index()
     {
         $projets = Projet::all();
@@ -54,14 +50,14 @@ class ProjetsController extends Controller
      */
     public function store(Request $request)
     {
-      
+        
         $projet = $this->create($request);
        
         $projet->save();
         $projet->clients()->attach($request->clients);
         $projet->enqueteurs()->attach($request->enqueteurs);
         $projet->administrateurs()->attach($request->administrateurs);
-        //$projet = $this->createTable($project->name,$request->reponses_table);
+        //$projet =$this->createTable('reponse',$request->reponses_table);
         
         return view('formulaire', compact('projet'));
     }
@@ -154,6 +150,7 @@ class ProjetsController extends Controller
     public function update(Request $request, $id)
     {
         
+        
         Projet::where('id',$id)->update(['nom'=> $request->nom,'nombre_max'=>$request->nombre_max]);
         
         if(isset($request->clients))
@@ -164,7 +161,7 @@ class ProjetsController extends Controller
              }
             
          }
-         elseif(isset($request->administrateur))
+         if(isset($request->administrateur))
          {  
              foreach($request->administrateur as $administrateur){
               
@@ -172,7 +169,7 @@ class ProjetsController extends Controller
              }
             
          }
-         else
+         if(isset ($request->enqueteurs))
          {  
              foreach($request->enqueteurs as $enqueteur){
               
@@ -215,13 +212,25 @@ class ProjetsController extends Controller
     }
     
     public function put (Request $request)
-    {
+    {  
+        
         $id = $request->id;
-        //dd($id);
+        
         $projet= Projet::find($id);
         
         $projet->projet_html = $request->projet_html;
         $projet->update();
+        
+        $data = json_decode($request->projet_html);
+      $label=array();
+        foreach($data as $d){
+            foreach ($d as $l){
+                array_push($label, $l->label);
+            }
+        }
+        
+        $reponse = $this->createTable("reponse_".$projet->id,$label);
+        $projet->reponses_table = $reponse;
         
         return redirect()->back();
     }
@@ -229,15 +238,17 @@ class ProjetsController extends Controller
 
 
 
-    public function createTable($table_nom,$champs=array() ){
-        
-        Schema::create($table_nom, function ($table) {
+    public function createTable($table_nom){
+        Schema::drop($table_nom);
+        Schema::create($table_nom,function ($table) {
             $table->increments('id');
-            foreach($champs as $ch){
-                $table->text($ch)->nullable();  
-            }
+            
+            
+                $table->text("nouha")->nullable();  
+            
             $table->timestamps();
         });
+        return $table_nom;
     }
     
     public function affiche(){

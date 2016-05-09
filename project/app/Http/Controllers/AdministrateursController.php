@@ -152,7 +152,7 @@ class AdministrateursController extends Controller
        
        $administrateurs->delete();
        
-       return redirect(route('all-administrateur'));
+       return redirect(route('all-admin'));
     }
     
     public function affiche(){

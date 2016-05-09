@@ -169,7 +169,7 @@ class EnqueteursController extends Controller
        
         $json = json_decode($html);
        
-       
+        
         
         return view('html',  compact('json','html'));
                  

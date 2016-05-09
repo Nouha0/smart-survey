@@ -26,6 +26,7 @@ Route::group(['prefix'=>'projets','middleware' => ['web']], function () {
     Route::get('/select-formulaire',['as'=>'select-formulaire','uses'=>'ProjetsController@show']);
     Route::get('/all-projet',['as'=>'all-projet','uses'=>'ProjetsController@affiche']);
     Route::get('delete-liaisonP/{id}/{id2}',['as'=>'delete-liaisonP','uses'=>'ProjetsController@deleteLiaison']);
+    Route::post('/creerTable/{id}',['as'=>'creeTable','uses'=>'ProjetsController@createTable']);
 
 
 });

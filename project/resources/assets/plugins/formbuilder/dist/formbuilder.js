@@ -213,7 +213,8 @@
       options = this.model.get(Formbuilder.options.mappings.OPTIONS) || [];
       newOption = {
         label: "",
-        checked: false
+        checked: false,
+        name: ""
       };
       if (i > -1) {
         options.splice(i + 1, 0, newOption);
@@ -239,7 +240,7 @@
     EditFieldView.prototype.defaultUpdated = function(e) {
       var $el;
       $el = $(e.currentTarget);
-      if (this.model.get(Formbuilder.options.mappings.FIELD_TYPE) !== 'checkboxes') {
+      if (this.model.get(Formbuilder.options.mappings.FIELD_TYPE) !== 'checkbox') {
         this.$el.find(".js-default-updated").not($el).attr('checked', false).trigger('change');
       }
       return this.forceRender();
@@ -583,6 +584,7 @@
         INCLUDE_OTHER: 'field_options.include_other_option',
         INCLUDE_BLANK: 'field_options.include_blank_option',
         INTEGER_ONLY: 'field_options.integer_only',
+        NAME: "field_options.name",
         MIN: 'field_options.min',
         MAX: 'field_options.max',
         MINLENGTH: 'field_options.minlength',
@@ -655,7 +657,7 @@
 }).call(this);
 
 (function() {
-  Formbuilder.registerField('checkboxes', {
+  Formbuilder.registerField('checkbox', {
     order: 10,
     view: "<% for (i in (rf.get(Formbuilder.options.mappings.OPTIONS) || [])) { %>\n  <div>\n    <label class='fb-option'>\n      <input type='checkbox' <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].checked && 'checked' %> onclick=\"javascript: return false;\" />\n      <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n    </label>\n  </div>\n<% } %>\n\n<% if (rf.get(Formbuilder.options.mappings.INCLUDE_OTHER)) { %>\n  <div class='other-option'>\n    <label class='fb-option'>\n      <input type='checkbox' />\n      Other\n    </label>\n\n    <input type='text' />\n  </div>\n<% } %>",
     edit: "<%= Formbuilder.templates['edit/options']({ includeOther: true }) %>",
@@ -769,9 +771,11 @@
         {
           label: "",
           checked: false
+          
         }, {
           label: "",
           checked: false
+          
         }
       ];
       return attrs;
@@ -872,7 +876,7 @@ __p +=
 return __p
 };
 
-this["Formbuilder"]["templates"]["edit/checkboxes"] = function(obj) {
+this["Formbuilder"]["templates"]["edit/checkbox"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
@@ -892,8 +896,8 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<div class=\'fb-edit-section-header\'>Label</div>\n\n<div class=\'fb-common-wrapper\'>\n  <div class=\'fb-label-description\'>\n    ' +
 ((__t = ( Formbuilder.templates['edit/label_description']() )) == null ? '' : __t) +
-'\n  </div>\n  <div class=\'fb-common-checkboxes\'>\n    ' +
-((__t = ( Formbuilder.templates['edit/checkboxes']() )) == null ? '' : __t) +
+'\n  </div>\n  <div class=\'fb-common-checkbox\'>\n    ' +
+((__t = ( Formbuilder.templates['edit/checkbox']() )) == null ? '' : __t) +
 '\n  </div>\n  <div class=\'fb-clear\'></div>\n</div>\n';
 
 }
