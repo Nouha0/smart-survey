@@ -13,9 +13,18 @@ use Illuminate\Support\Facades\Schema as Schema;
 
 class ProjetsController extends Controller
 {
+    public $colonnes;
     
-    
-    public function index()
+    public function getColonnes()
+    {
+        return $this->colonnes;
+    }
+    public function  setColonnes($c)
+    {
+        $this->colonnes=$c;
+    }  
+
+        public function index()
     {
         $projets = Projet::all();
         $clients = Client::lists('nom', 'id');
@@ -219,7 +228,7 @@ class ProjetsController extends Controller
         $projet= Projet::find($id);
         
         $projet->projet_html = $request->projet_html;
-        $projet->update();
+        
         
         $data = json_decode($request->projet_html);
       $label=array();
@@ -228,10 +237,10 @@ class ProjetsController extends Controller
                 array_push($label, $l->label);
             }
         }
-        
-        $reponse = $this->createTable("reponse_".$projet->id,$label);
+        $this->setColonnes($label);
+        $reponse = $this->createTable("reponse_".$projet->id);
         $projet->reponses_table = $reponse;
-        
+        $projet->update();
         return redirect()->back();
     }
     
@@ -239,15 +248,24 @@ class ProjetsController extends Controller
 
 
     public function createTable($table_nom){
-        Schema::drop($table_nom);
-        Schema::create($table_nom,function ($table) {
+        
+       
+        if (Schema::hasTable($table_nom)) 
+        {
+            Schema::drop($table_nom);
+            
+        }
+       else {
+           Schema::create($table_nom,function ($table) {
             $table->increments('id');
             
-            
-                $table->text("nouha")->nullable();  
-            
+            foreach ($this->getColonnes() as $c )
+            {
+                $table->text($c)->nullable();  
+            }
             $table->timestamps();
         });
+        }
         return $table_nom;
     }
     

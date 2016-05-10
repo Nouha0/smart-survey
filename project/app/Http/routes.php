@@ -51,6 +51,7 @@ Route::group(['prefix'=>'enqueteurs','middleware'=>['web']],function(){
     Route::get('delete-liaisonE/{id}/{id2}',['as'=>'delete-liaisonE','uses'=>'EnqueteursController@deleteLiaison']);
     Route::get('/all-enqueteur',['as'=>'all-enqueteur','uses'=>'EnqueteursController@affiche']);
     Route::get('liste-projet/{id}',['as'=>'liste-projet','uses'=>'EnqueteursController@liste_projet']);
+    Route::post('add-reponse/{id}',['as'=>'add-reponse','uses'=>'EnqueteursController@add_reponse']);
 });
 //group of administrateur
 Route::group(['prefix'=>'administrateur','middleware'=>['web']],function(){

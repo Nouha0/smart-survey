@@ -164,14 +164,14 @@ class EnqueteursController extends Controller
         
         
         
-        $html = $projet->projet_html;
+        
         
        
-        $json = json_decode($html);
+        
        
         
         
-        return view('html',  compact('json','html'));
+        return view('html',  compact('projet'));
                  
     }
     
@@ -185,7 +185,11 @@ class EnqueteursController extends Controller
     
     public function liste_projet($id){
         $projet = Enqueteur::find($id)->projets()->get();
-        
         return view('liste-projet',  compact(['projet']));
+    }
+    
+    public function add_reponse(Request $request, $id){
+        dd($request);
+        DB::insert('insert into users (id, name) values (?, ?)', [1, 'Dayle']);
     }
 }
