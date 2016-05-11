@@ -21,19 +21,21 @@
             @{{#fields}}
                 <br />
                 <label>@{{label}}</label> <br />
+                
                 @{{#field_options}}
+            
                     @{{#options}}
-                        <input type="@{{field_type}}" size="@{{size}}" minlength="@{{minlength}}" maxlength="@{{maxlength}}" required="@{{required}}" name="label" value="@{{label}}" >
+                        <input type="@{{field_type}}" size="@{{size}}" minlength="@{{minlength}}" maxlength="@{{maxlength}}" required="@{{required}}" name=""+l+"" value="@{{label}}" >
                                 @{{label}}
                         </input> <br />
                     @{{/options}}
                     @{{^options}}
-                        <input type="@{{field_type}}" size="@{{size}}" minlength="@{{minlength}}" maxlength="@{{maxlength}}" required="@{{required}}" name="label" value="@{{label}}" >
+                        <input type="@{{field_type}}" size="@{{size}}" minlength="@{{minlength}}" maxlength="@{{maxlength}}" required="@{{required}}" name=""+l+"" value="@{{label}}" >
                         </input> <br />
                     @{{/options}}
                 @{{/field_options}}
                 @{{^field_options}}
-                    <input type="@{{field_type}}" required="@{{required}}" name="@{{fields.label}}"></input>
+                    <input type="@{{field_type}}" required="@{{required}}" name=l></input>
                 @{{/field_options}}
                 @{{#include_other_option}}
                     <input type="@{{field_type}}">others</input>
@@ -42,19 +44,14 @@
     </script>
     <script>
         var jdataText = $(".json").val();
-        //var jdata = JSON.parse(jdataText);
-        console.log(jdataText);
+        var jdata = JSON.parse(jdataText);
         
         
-        var data ={"fields":[{"label":"sexe","field_type":"checkbox","required":true,"field_options":{"options":[{"label":"Homme","checked":false},{"label":"Femme","checked":false}]},"cid":"c2"},{"label":"formation","field_type":"radio","required":true,"field_options":{"options":[{"label":"continue","checked":false},{"label":"Apprentissage","checked":false}],"include_other_option":true},"cid":"c6"},{"label":"nom","field_type":"text","required":true,"field_options":{"size":"medium","minlength":"3","maxlength":"17","min_max_length_units":"characters"},"cid":"c11"},{"label":"sport","field_type":"radio","required":true,"field_options":{"options":[{"label":"basket","checked":false},{"label":"foot","checked":false}],"include_other_option":true},"cid":"c11"}]};
-        var label = [];
-        $.each(data.fields, function(key,val){
-           label = val;
-        });
-       
-        console.log(label[0]);
+        
+        
+        console.log(jdata);
         var tmpl = $("#helloTmpl").html();
-        var html = Mustache.to_html(tmpl,data);
+        var html = Mustache.to_html(tmpl,jdata);
         //console.log(tmpl);
         //console.log(html);
        // console.log(data.title);

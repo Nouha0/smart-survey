@@ -253,8 +253,8 @@
     </div>
 
 <!-- scripts -->
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="{{url('project/resources/assets/plugins/formbuilder/dist/formbuilder.js')}}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <!--<script src="{{url('project/resources/assets/js/jquery.min.js')}}"></script>-->
     <script src="{{url('project/resources/assets/js/bootstrap.js')}}"></script>
     <script src="{{url('project/resources/assets/js/theme.js')}}"></script>

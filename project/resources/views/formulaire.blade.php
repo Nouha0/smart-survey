@@ -38,7 +38,7 @@
           fb.on('save', function(payload){
             console.log(payload);
             $('.form-json').val(payload);
-          })
+          });
         });
         
       </script>

@@ -66,6 +66,7 @@ class ProjetsController extends Controller
         $projet->clients()->attach($request->clients);
         $projet->enqueteurs()->attach($request->enqueteurs);
         $projet->administrateurs()->attach($request->administrateurs);
+       
         //$projet =$this->createTable('reponse',$request->reponses_table);
         
         return view('formulaire', compact('projet'));
@@ -80,7 +81,7 @@ class ProjetsController extends Controller
     public function show($id)
     {
         $projet = Projet::findOrFail($id);
-        
+      
         return view('formulaire', compact(['projet']));
     }
 

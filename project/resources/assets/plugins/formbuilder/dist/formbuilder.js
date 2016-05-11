@@ -213,8 +213,7 @@
       options = this.model.get(Formbuilder.options.mappings.OPTIONS) || [];
       newOption = {
         label: "",
-        checked: false,
-        name: ""
+        checked: false
       };
       if (i > -1) {
         options.splice(i + 1, 0, newOption);
@@ -240,7 +239,7 @@
     EditFieldView.prototype.defaultUpdated = function(e) {
       var $el;
       $el = $(e.currentTarget);
-      if (this.model.get(Formbuilder.options.mappings.FIELD_TYPE) !== 'checkbox') {
+      if (this.model.get(Formbuilder.options.mappings.FIELD_TYPE) !== 'checkboxes') {
         this.$el.find(".js-default-updated").not($el).attr('checked', false).trigger('change');
       }
       return this.forceRender();
@@ -584,7 +583,6 @@
         INCLUDE_OTHER: 'field_options.include_other_option',
         INCLUDE_BLANK: 'field_options.include_blank_option',
         INTEGER_ONLY: 'field_options.integer_only',
-        NAME: "field_options.name",
         MIN: 'field_options.min',
         MAX: 'field_options.max',
         MINLENGTH: 'field_options.minlength',
@@ -657,7 +655,7 @@
 }).call(this);
 
 (function() {
-  Formbuilder.registerField('checkbox', {
+  Formbuilder.registerField('checkboxes', {
     order: 10,
     view: "<% for (i in (rf.get(Formbuilder.options.mappings.OPTIONS) || [])) { %>\n  <div>\n    <label class='fb-option'>\n      <input type='checkbox' <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].checked && 'checked' %> onclick=\"javascript: return false;\" />\n      <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n    </label>\n  </div>\n<% } %>\n\n<% if (rf.get(Formbuilder.options.mappings.INCLUDE_OTHER)) { %>\n  <div class='other-option'>\n    <label class='fb-option'>\n      <input type='checkbox' />\n      Other\n    </label>\n\n    <input type='text' />\n  </div>\n<% } %>",
     edit: "<%= Formbuilder.templates['edit/options']({ includeOther: true }) %>",
@@ -689,7 +687,7 @@
 }).call(this);
 
 (function() {
-  Formbuilder.registerField('dropdown', {
+  Formbuilder.registerField('select', {
     order: 24,
     view: "<select>\n  <% if (rf.get(Formbuilder.options.mappings.INCLUDE_BLANK)) { %>\n    <option value=''></option>\n  <% } %>\n\n  <% for (i in (rf.get(Formbuilder.options.mappings.OPTIONS) || [])) { %>\n    <option <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].checked && 'selected' %>>\n      <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n    </option>\n  <% } %>\n</select>",
     edit: "<%= Formbuilder.templates['edit/options']({ includeBlank: true }) %>",
@@ -737,7 +735,7 @@
 }).call(this);
 
 (function() {
-  Formbuilder.registerField('paragraph', {
+  Formbuilder.registerField('textarea', {
     order: 5,
     view: "<textarea class='rf-size-<%= rf.get(Formbuilder.options.mappings.SIZE) %>'></textarea>",
     edit: "<%= Formbuilder.templates['edit/size']() %>\n<%= Formbuilder.templates['edit/min_max_length']() %>",
@@ -771,11 +769,9 @@
         {
           label: "",
           checked: false
-          
         }, {
           label: "",
           checked: false
-          
         }
       ];
       return attrs;
@@ -789,7 +785,7 @@
     order: 0,
     type: 'non_input',
     view: "<label class='section-name'><%= rf.get(Formbuilder.options.mappings.LABEL) %></label>\n<p><%= rf.get(Formbuilder.options.mappings.DESCRIPTION) %></p>",
-    edit: "<div class='fb-edit-section-header'>Label</div>\n<input type='text' data-rv-input='model.<%= Formbuilder.options.mappings.LABEL %>' />\n<textarea data-rv-input='model.<%= Formbuilder.options.mappings.DESCRIPTION %>'\n  placeholder='Add a longer description to this field'></textarea>",
+    edit: "<div class='fb-edit-section-header'>Label</div>\n<input type='text' data-rv-input='model.<%= Formbuilder.options.mappings.LABEL %>' />\n<br><label>Nom de l'input</label><textarea data-rv-input='model.<%= Formbuilder.options.mappings.DESCRIPTION %>'\n  placeholder='Ajouter un nom pour l\'input'></textarea>",
     addButton: "<span class='symbol'><span class='fa fa-minus'></span></span> Section Break"
   });
 
@@ -820,7 +816,7 @@
 }).call(this);
 
 (function() {
-  Formbuilder.registerField('website', {
+  Formbuilder.registerField('url', {
     order: 35,
     view: "<input type='text' placeholder='http://' />",
     edit: "",
@@ -876,7 +872,7 @@ __p +=
 return __p
 };
 
-this["Formbuilder"]["templates"]["edit/checkbox"] = function(obj) {
+this["Formbuilder"]["templates"]["edit/checkboxes"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
@@ -896,8 +892,8 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<div class=\'fb-edit-section-header\'>Label</div>\n\n<div class=\'fb-common-wrapper\'>\n  <div class=\'fb-label-description\'>\n    ' +
 ((__t = ( Formbuilder.templates['edit/label_description']() )) == null ? '' : __t) +
-'\n  </div>\n  <div class=\'fb-common-checkbox\'>\n    ' +
-((__t = ( Formbuilder.templates['edit/checkbox']() )) == null ? '' : __t) +
+'\n  </div>\n  <div class=\'fb-common-checkboxes\'>\n    ' +
+((__t = ( Formbuilder.templates['edit/checkboxes']() )) == null ? '' : __t) +
 '\n  </div>\n  <div class=\'fb-clear\'></div>\n</div>\n';
 
 }
@@ -922,9 +918,9 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<input type=\'text\' data-rv-input=\'model.' +
 ((__t = ( Formbuilder.options.mappings.LABEL )) == null ? '' : __t) +
-'\' />\n<textarea data-rv-input=\'model.' +
+'\' />\n<label>Nom du champs *</label><input data-rv-input=\'model.' +
 ((__t = ( Formbuilder.options.mappings.DESCRIPTION )) == null ? '' : __t) +
-'\'\n  placeholder=\'Add a longer description to this field\'></textarea>';
+'\'\n  placeholder=\'Ajouter un nom pour le champs\'>';
 
 }
 return __p

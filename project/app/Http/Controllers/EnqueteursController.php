@@ -160,18 +160,8 @@ class EnqueteursController extends Controller
     public function html($id){
         
         $projet = Projet::findOrFail($id);
-        
-        
-        
-        
-        
-        
-       
-        
-       
-        
-        
-        return view('html',  compact('projet'));
+        $l="";
+        return view('html',  compact('projet','l'));
                  
     }
     
