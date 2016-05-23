@@ -27,7 +27,7 @@
                                 @endforeach
                             </td>
                             <td>
-                                <a  data-toggle="tooltip" data-placement="top" title="modifier le formulaire" href="" class="btn btn-info btn-xs pull-left"><i class="fa fa-database" aria-hidden="true"></i></a>            
+                                <a  data-toggle="tooltip" data-placement="top" title="modifier le formulaire" href="{{route('list-form',$administrateur->id)}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-database" aria-hidden="true"></i></a>            
                                 <a href="{{route('edit-administrateur', $administrateur->id)}}" class="btn btn-success btn-xs pull-left"  data-toggle="tooltip" data-placement="top" title="Modifier le projet"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
             
                                 {!! Form::open(['method'=>'POST','url'=>route('delete-administrateur'), 'class'=>'pull-left'])  !!}

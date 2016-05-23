@@ -8,6 +8,13 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Input;
 
+use App\Enqueteur;
+use App\Client;
+use App\Administrateur;
+use App\Projet;
+
+
+
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
@@ -105,6 +112,34 @@ class Controller extends BaseController
         }
         else {
             return false;
+        }
+    }
+    
+    /*
+     * $id : l'ID du projet 
+     * $id2 : l'ID de la personne reliée
+     * $nature : admin / enq / client
+     */
+    static function InProjet($id,$id2,$nature){
+        $projet = Projet::FindOrFail($id);
+        
+        $list = array();
+        
+        if($nature == 'admin'){
+            $list = $projet->Administrateurs()->get()->lists('id');
+        }else if ($nature == 'enq'){
+            $list = $projet->Enqueteurs()->get()->lists('id');
+        }else if($nature == 'client'){
+            $list = $projet->Clients()->get()->lists('id');
+        }else{
+            dd('erreur');
+        }
+        
+        
+        if(in_array($id2,  json_decode(json_encode($list)) )){
+                return true;
+        }else {
+             return false;   
         }
     }
     

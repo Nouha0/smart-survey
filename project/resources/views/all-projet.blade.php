@@ -22,11 +22,22 @@
 
                     <tbody>    
                         @foreach($projets as $projet)
-                        <tr>
+                        
+                        @if(!isset($projet->reponses))
+                        <tr class='projet danger'>
+                        @else
+                        <tr class='projet'>
+                        @endif
                             <td>{{$projet->nom}}</td> 
                             <td>{{$projet->projet_start}} </td>
                             <td>{{$projet->projet_end}} </td>
-                            <td>{{$projet->nombre_max}} </td>
+                            <td class='barre_progression'>{{$projet->reponses }}/{{$projet->nombre_max}} - {{$projet->reponses / $projet->nombre_max *100}}%
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{$projet->reponses / $projet->nombre_max*100}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$projet->reponses / $projet->nombre_max*100}}%">
+                                  <span class="sr-only">{{$projet->reponses / $projet->nombre_max *100}}% Complete (success)</span>
+                                </div>
+                              </div>
+                            </td>
                             <td>
                                 @foreach($projet->clients()->get() as $client)
                                     {{$client->nom}} -
@@ -43,6 +54,7 @@
                                 @endforeach
                             </td>
                             <td>
+                                @if(!empty($projet->projet_html))<a  data-toggle="tooltip" data-placement="top" title="voir les reponses" href="{{route('reponse',$projet->id )}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-eye" aria-hidden="true"></i></a>@endif            
                                 <a  data-toggle="tooltip" data-placement="top" title="modifier le formulaire" href="{{route('formulaire',$projet->id )}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-database" aria-hidden="true"></i></a>            
                                 <a href="{{route('edit-projet', $projet->id)}}" class="btn btn-success btn-xs pull-left"  data-toggle="tooltip" data-placement="top" title="Modifier le projet"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
             
@@ -63,4 +75,9 @@
         </div>
     </div>
 </div>
+@endsection
+@section('js')
+<script>
+
+</script>
 @endsection

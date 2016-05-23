@@ -9,7 +9,7 @@ use App\Projet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema as Schema;
 
-
+use DB ;
 
 class ProjetsController extends Controller
 {
@@ -93,61 +93,30 @@ class ProjetsController extends Controller
      */
     public function edit($id)
     {
-        $tab=array();
-        $tabl = array();
-        $tableau=array();
-        $tableau1=array();
-        $tableau2=array();
-        $x = Client::all();
-        $y = Enqueteur::all();
-        $z = Administrateur::all();
-        $projets = Projet::findOrFail($id);
-        //clients
-        foreach ($projets->clients()->get() as $c)
-        {
-            $tab[$c->id]=$c->nom;              
-        }
+        $projet = Projet::findOrFail($id);
         
-        $proj_client = $tab;
+        $clients = Client::lists('nom', 'id');
         
-        foreach ($x as $cl)
-        {
-            $tabl[$cl->id]=$cl->nom;
-                      
-        }
-       
-        $clients=$tabl;
-        //enqueteur
-        foreach ($projets->enqueteurs()->get() as $e)
-        {
-            $tab[$e->id]=$e->nom;              
-        }
         
-        $proj_enq = $tab;
+        $enqueteurs = Enqueteur::lists('nom', 'id');        
         
-        foreach ($y as $enq)
-        {
-            $tabl[$enq->id]=$enq->nom;
-                      
-        }
-       
-        $enqueteurs=$tabl;
-        //administrateur
-        foreach ($projets->administrateurs()->get() as $a)
-        {
-            $tab[$a->id]=$a->nom;              
-        }
+        $administrateurs = Administrateur::lists('nom', 'id');
         
-        $proj_admin = $tab;
+        $liste_champs = json_decode($projet->list_champs);
         
-        foreach ($z as $admin)
-        {
-            $tabl[$admin->id]=$admin->nom;
-                      
+        $json   = json_decode($projet->projet_html);
+        $diff = array();
+        $champs =array();
+       if(!empty($json)){
+            foreach ($json->fields as $j){
+                if($j->field_type == "checkboxes" || $j->field_type == "radio" || $j->field_type == "select" ){
+                    $champs[$j->field_options->description] = $j->label;
+                }
+           }
+        
+        $diff =array_diff($champs,$liste_champs);
         }
-       
-        $administrateurs=$tabl;
-        return view('edit-projet', compact(['projets','clients','proj_client','tableau','proj_enq','enqueteurs','tableau1','proj_admin','administrateurs','tableau2']));
+        return view('edit-projet', compact(['projet','clients','enqueteurs','administrateurs','liste_champs', 'diff']));
     }
 
     /**
@@ -159,46 +128,42 @@ class ProjetsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $projet = Projet::findOrFail($id);
         
+        $elements = $request->list_champs;
         
-        Projet::where('id',$id)->update(['nom'=> $request->nom,'nombre_max'=>$request->nombre_max]);
+        $table= array();
         
-        if(isset($request->clients))
-         {  
-             foreach($request->clients as $client){
-              
-                  Projet::find($id)->clients()->attach([$client]);
-             }
-            
-         }
-         if(isset($request->administrateur))
-         {  
-             foreach($request->administrateur as $administrateur){
-              
-                  Projet::find($id)->administrateurs()->attach([$administrateur]);
-             }
-            
-         }
-         if(isset ($request->enqueteurs))
-         {  
-             foreach($request->enqueteurs as $enqueteur){
-              
-                  Projet::find($id)->enqueteurs()->attach([$enqueteur]);
-             }
-            
-         }
+        foreach ($elements as $k => $v){
+            array_push($table,$k);
+        }
+        
+        $projet->nom = $request->nom;
+        
+        $projet->nombre_max = $request->nombre_max;
+        
+        $projet->list_champs = json_encode($table);
+        
+        $projet->clients()->sync($request->clients);
+        
+        $projet->enqueteurs()->sync($request->enqueteurs);
+        
+        $projet->administrateurs()->sync($request->administrateurs);
+        
+        $projet->update();
          
-        return redirect(route('all-projet'));
+        return redirect()->back();
     }
     
     public function deleteLiaison($id,$id2){
          
+       $projet = Projet::find($id); 
        
-       Projet::find($id)->clients()->detach([$id2]);
+       $projet->clients()->detach([$id2]);
      
-       Projet::find($id)->enqueteurs()->detach([$id2]);
+       $projet->enqueteurs()->detach([$id2]);
 
-       Projet::find($id)->administrateurs()->detach([$id2]);
+       $projet->administrateurs()->detach([$id2]);
         
         
         return 'true';
@@ -225,30 +190,73 @@ class ProjetsController extends Controller
     {  
         
         $id = $request->id;
-        
+ 
         $projet= Projet::find($id);
         
         $projet->projet_html = $request->projet_html;
         
-        
         $data = json_decode($request->projet_html);
-      $label=array();
+        //dd($data);
+        $description=array();
+        
         foreach($data as $d){
-            foreach ($d as $l){
-                array_push($label, $l->label);
+            foreach ($d as $des){
+                
+                if(isset($des->field_options->description) && !empty($des->field_options->description)){
+                    array_push($description,$des->field_options->description);
+                    
+                }else {
+                    array_push($description,str_replace(' ','_',$des->label));
+                    $des->field_options->description = str_replace(' ','_',$des->label);
+                }
             }
+            
         }
-        $this->setColonnes($label);
+        $projet->projet_html = json_encode($data);
+        
+        $this->setColonnes($description);
+        
         $reponse = $this->createTable("reponse_".$projet->id);
+        
         $projet->reponses_table = $reponse;
+        
         $projet->update();
-        return redirect()->back();
+       
+        return redirect(route('build-graph',$projet->id));
     }
     
+    public function buildGraph($id){
+        $projet = Projet::findOrFail($id);
+        $json   = json_decode($projet->projet_html);
+        $id = $projet->id;
+        $champs =array();
+        
+        foreach ($json->fields as $j){
+            if($j->field_type == "checkboxes" || $j->field_type == "radio" || $j->field_type == "select" ){
+                $champs[$j->field_options->description] = $j->label;
+            }
+        }
+        return view('build-graph', compact(['projet', 'champs']));
+    }
+    
+    public function buildGraphPut(Request $request){
+        $projet = Projet::findOrFail($request->id);
+        $elements = $request->names;
+        
+        $champs = array();
+        foreach ($elements as $k=>$v){
+            array_push($champs, $k);
+        }
+        
+        $projet->list_champs = json_encode($champs);
+        
+        $projet->update();
+        
+        return redirect(route('all-projet'));
+        
+    }
 
-
-
-    public function createTable($table_nom){
+        public function createTable($table_nom){
         
        
         if (Schema::hasTable($table_nom)) 
@@ -260,8 +268,7 @@ class ProjetsController extends Controller
            Schema::create($table_nom,function ($table) {
             $table->increments('id');
             
-            foreach ($this->getColonnes() as $c )
-            {
+            foreach ($this->getColonnes() as $c ){
                 $table->text($c)->nullable();  
             }
             $table->timestamps();
@@ -271,14 +278,66 @@ class ProjetsController extends Controller
     }
     
     public function affiche(){
-        
         $projets = Projet::all();
         $clients = Client::lists('nom', 'id');
         $enqueteurs = Enqueteur::lists('nom','id');
         $administrateurs = Administrateur::lists('nom','id');
-        return view('all-projet', compact(['projets', 'clients','enqueteurs','administrateurs']));
+        foreach($projets as $projet){
+            
+            if(!empty($projet->reponses_table) && Schema::hasTable($projet->reponses_table)){
+                $projet->reponses = DB::table($projet->reponses_table)->count();
+            }
+        }
+        //dd($projets);
+        return view('all-projet', compact(['projets', 'clients','enqueteurs','administrateurs','nb_reponses']));
         
     }
+    
+    public function VoirReponse($id){
+        
+        $projet = Projet::findOrFail($id);
+        
+        $reponse = $projet->reponses_table;
+        $json = json_decode($projet->projet_html);
+        
+        $champs = $names= $options =array();
+        $list_champs = json_decode($projet->list_champs);
+        
+        $r = DB::table($reponse)->select()->get();
+        
+        foreach ($json->fields as $j){
+            
+            array_push($champs,$j->label);
+            array_push($names, $j->field_options->description);   
+        }
+       
+       foreach($list_champs as $ch){
+            foreach ($json->fields as $j){
+                $o = [];
+                
+                if($j->field_options->description == $ch){
+                    
+                    foreach($j->field_options->options as $opt){
+                        $o[$opt->label] = 0;
+                    }
+                    $options[$ch] = array();
+                    $options[$ch]= $o;
+                }
+            }
+        }
+        
+        foreach($list_champs as $op){
+            foreach($r as $obj){
+               $options[$op][$obj->$op] = intval($options[$op][$obj->$op])+1;
+            }
+        }
+        
+        
+         
+        return view('reponse',  compact(['r', 'champs', 'names','options']));
+    }
+    
+    
     
     
 

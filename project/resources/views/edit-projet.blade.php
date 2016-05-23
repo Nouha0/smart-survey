@@ -7,125 +7,50 @@
     
     <div class="row">
         <div class="col-md-12">
-    {!! Form::model($projets, ['method'=>'PUT','url'=>route('update-projet',$projets->id)])  !!}      
+    {!! Form::model($projet, ['method'=>'PUT','url'=>route('update-projet',$projet->id)])  !!}      
        <div class="form-group">
           
-                        {!! Form::label('', 'Projet Nom') !!}
-                        {!! Form::text('nom', null,['placeholder'=>'nom du projet', 'class'=>'form-control'] ) !!}
-            </div>
-             <div class="form-group">
-                 {!! Form::label('','Clients selectionnés') !!}
-                 <ul>
-                        @foreach($clients as $key => $client)
-                            @if(in_array($client,$proj_client))
-                                <li>{{$client}}   <button data-id="{{$key}}" class="btn btn-danger btn-xs supp-utilisateur">X</button></li>
-                            @else
-                                <div class="hidden"> 
-                                    {{$tableau[$key]=$client}}
-
-                                </div>    
-                            @endif
-                        @endforeach
-                 </ul>
-            </div>
-            @if(!empty($tableau))
-                <div class="form-group">
-
-                           {!! Form::label('', 'Clients') !!}
-                           {!! Form::select('clients[]',$tableau,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
-
-               </div>
-            @endif
-            <div class="form-group">
-                 {!! Form::label('','Enqueteurs selectionnés') !!}
-                 <ul>
-                    
-                        @foreach($enqueteurs as $key => $enqueteur)
-                            @if(in_array($enqueteur,$proj_enq))
-                                <li>{{$enqueteur}}   <button data-id="{{$key}}" class="btn btn-danger btn-xs supp-utilisateur">X</button></li>
-                            @else
-                                <div class="hidden"> 
-                                    {{$tableau1[$key]=$enqueteur}}
-
-                                </div>    
-                            @endif
-                        @endforeach
-                         
-                 </ul>
-            </div>
-           
-            @if(!empty($tableau1))
-                <div class="form-group">
-                             {!! Form::label('', 'Nouveaux Enqueteurs') !!}
-                            {!! Form::select('enqueteurs[]',$tableau1,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
-
-                </div>
-            @endif
-            <div class="form-group">
-                 {!! Form::label('','Administrateurs selectionnés') !!}
-                 <ul>
-                        @foreach($administrateurs as $key => $administrateur)
-                            @if(in_array($administrateur,$proj_admin))
-                                <li>{{$administrateur}}   <button data-id="{{$key}}" class="btn btn-danger btn-xs supp-utilisateur">X</button></li>
-                            @else
-                                <div class="hidden"> 
-                                    {{$tableau2[$key]=$administrateur}}
-
-                                </div>    
-                            @endif
-                        @endforeach
-                 </ul>
-            </div>
-            
-            @if(!empty($tableau2))
-                <div class="form-group">
-
-                            {!! Form::label('', 'Administrateurs') !!}
-                            {!! Form::select('administrateur[]',$tableau2,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
-
-                </div>
-            @endif
-            <div class="form-group">
-                        {!! Form::label('','Nombre d\'envoie max') !!}
-                        {!! Form::text('nombre_max', null,['placeholder'=>'nombre max', 'class'=>'form-control']) !!}
+            {!! Form::label('', 'Projet Nom') !!}
+            {!! Form::text('nom', null,['placeholder'=>'nom du projet', 'class'=>'form-control'] ) !!}
+        </div>
+        <div class="form-group">
+        <label class="control-label"> Clients associées</label>
+            {!! Form::select('clients[]',$clients, $projet->clients()->lists('clients.id')->toArray(),['class'=>'bg-focus form-control select-2', 'multiple'=>true, 'required'=>true]) !!}
+        </div>
+        <div class="form-group">
+        <label class="control-label"> Enqueteurs associées</label>
+            {!! Form::select('enqueteurs[]',$enqueteurs, $projet->enqueteurs()->lists('enqueteurs.id')->toArray(),['class'=>'bg-focus form-control select-2', 'multiple'=>true, 'required'=>true]) !!}
+        </div>
+        <div class="form-group">
+        <label class="control-label"> Administrateurs associées</label>
+            {!! Form::select('administrateurs[]',$administrateurs, $projet->administrateurs()->lists('administrateurs.id')->toArray(),['class'=>'bg-focus form-control select-2', 'multiple'=>true, 'required'=>true]) !!}
+        </div>
+        @if(!empty($liste_champs) && !empty($liste_champs))
+       <div class="form-group">
+           <label >Valeurs statistiques sélélectionnés</label><br />
+                @if(isset($liste_champs)&& !empty($liste_champs) || isset($diff)&& !empty($diff))
+                    @foreach($liste_champs as $l)
+                        
+                            <input type="checkbox" name="list_champs[{{$l}}]"checked="true" > {{$l}}
+                       
+                    @endforeach
+                    @foreach($diff as $k => $v)
+                        
+                            <input type="checkbox" name="list_champs[{{$k}}]" > {{$v}}
+                        
+                    @endforeach
+                @endif
+        </div>
+        @endif
+        <div class="form-group">
+            {!! Form::label('','Nombre d\'envoie max') !!}
+            {!! Form::text('nombre_max', null,['placeholder'=>'nombre max', 'class'=>'form-control']) !!}
             <br/>
             <button class='btn btn-success pull-right' type='submit'>modifier</button>
-            </div>
+            <a href="{{route('all-projet')}}" class="btn btn-info">Retour</a>
+        </div>
     </div>
         
     {!! Form::close() !!}
 </div>
-@endsection
-@section('js')
-<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>-->
-
-<script>
-    console.log('wxcvbjk');
-    var supp_projetRoute="{{route('delete-liaisonP',array($projets->id,0))}}";
-    supp_projetRoute = supp_projetRoute.slice(0, - 1);
-     $('.supp-utilisateur').on('click',function (e){
-    e.preventDefault();
-      console.log('wxcvbjk');
-    var id=$(this).attr('data-id');
-    
-    var Route=supp_projetRoute+id;
-    var res= $(this).parent();
-   
-    $.ajax({
-        url: Route,
-        type: 'GET',
-        data: '',
-        dataType: 'text',
-        success: function(response) {
-           console.log('oui');
-           res.remove();                  
-       
-        },
-        fail: function(response) {
-            console.log('non')
-        }
-    });
-});
-   
-</script>
 @endsection

@@ -14,44 +14,59 @@
     return view('welcome');
 });*/
 
+
+Route::group(['middleware' => 'web'], function () {
+    Route::auth();
+
+    Route::get('/home', 'HomeController@index');
+});
+
 //group of projets
 Route::group(['prefix'=>'projets','middleware' => ['web']], function () {
     Route::get('/affiche-projet',['as'=>'affiche-projet','uses'=>'ProjetsController@index'] );
-    Route::post('/add-projet',['as'=>'add-projet','uses'=>'ProjetsController@store'] );
-    Route::put('/update-projet/{id}',['as'=>'update-projet','uses'=>'ProjetsController@update']);
-    Route::post('/delete-projet',['as'=>'delete-projet','uses'=>'ProjetsController@destroy']);
-    Route::get('/edit-projet/{id}',['as'=>'edit-projet','uses'=>'ProjetsController@edit'] );
+    Route::post('/ajout-projet',['as'=>'add-projet','uses'=>'ProjetsController@store'] );
+    Route::put('/maj-projet/{id}',['as'=>'update-projet','uses'=>'ProjetsController@update']);
+    Route::post('/supp-projet',['as'=>'delete-projet','uses'=>'ProjetsController@destroy']);
+    Route::get('/modif-projet/{id}',['as'=>'edit-projet','uses'=>'ProjetsController@edit'] );
     Route::get('/formulaire/{id}',['as'=>'formulaire','uses'=>'ProjetsController@show']);
-    Route::put('/put-formulaire',['as'=>'put-formulaire','uses'=>'ProjetsController@put']);
-    Route::get('/select-formulaire',['as'=>'select-formulaire','uses'=>'ProjetsController@show']);
-    Route::get('/all-projet',['as'=>'all-projet','uses'=>'ProjetsController@affiche']);
-    Route::get('delete-liaisonP/{id}/{id2}',['as'=>'delete-liaisonP','uses'=>'ProjetsController@deleteLiaison']);
-    Route::post('/creerTable/{id}',['as'=>'creeTable','uses'=>'ProjetsController@createTable']);
-
+    Route::put('/maj-formulaire',['as'=>'put-formulaire','uses'=>'ProjetsController@put']);
+    //Route::get('/select-formulaire',['as'=>'select-formulaire','uses'=>'ProjetsController@show']);
+    Route::get('/tous-projet',['as'=>'all-projet','uses'=>'ProjetsController@affiche']);
+    Route::get('supp-liaisonP/{id}/{id2}',['as'=>'delete-liaisonP','uses'=>'ProjetsController@deleteLiaison']);
+    //Route::post('/creerTable/{id}',['as'=>'creeTable','uses'=>'ProjetsController@createTableP']);
+    Route::get('reponse/{id}',['as'=>'reponse','uses'=>'ProjetsController@VoirReponse']);
+    
+    Route::get('build-graph/{id}',['as'=>'build-graph','uses'=>'ProjetsController@buildGraph']);
+    Route::put('build-graph-put',['as'=>'graph-put-formulaire','uses'=>'ProjetsController@buildGraphPut']);
+    
 
 });
 //group of clients
 Route::group(['prefix'=>'clients','middleware'=>['web']],  function (){
     Route::get('/affiche-client',['as'=>'affiche-client','uses'=>'ClientsController@index']);
-    Route::post('/add-client',['as'=>'add-client','uses'=>'ClientsController@store']);
-    Route::put('/update-client/{id}',['as'=>'update-client','uses'=>'ClientsController@update']);
-    Route::post('/delete-client',['as'=>'delete-client','uses'=>'ClientsController@destroy']);
-    Route::get('/edit-client/{id}',['as'=>'edit-client','uses'=>'ClientsController@edit'] );
-    Route::get('delete-liaisonC/{id}/{id2}',['as'=>'delete-liaisonC','uses'=>'ClientsController@deleteLiaison']);
-    Route::get('/all-client',['as'=>'all-client','uses'=>'ClientsController@affiche']);
+    Route::post('/ajout-client',['as'=>'add-client','uses'=>'ClientsController@store']);
+    Route::put('/maj-client/{id}',['as'=>'update-client','uses'=>'ClientsController@update']);
+    Route::post('/supp-client',['as'=>'delete-client','uses'=>'ClientsController@destroy']);
+    Route::get('/modif-client/{id}',['as'=>'edit-client','uses'=>'ClientsController@edit'] );
+    Route::get('supp-liaisonC/{id}/{id2}',['as'=>'delete-liaisonC','uses'=>'ClientsController@deleteLiaison']);
+    Route::get('/Tous-client',['as'=>'all-client','uses'=>'ClientsController@affiche']);
 });
 //group of enqueteurs
+/*
+ * id : enq
+ * id2 : projet
+ */
 Route::group(['prefix'=>'enqueteurs','middleware'=>['web']],function(){
     Route::get('/affiche-enqueteur',['as'=>'affiche-enqueteur','uses'=>'EnqueteursController@index']);
     Route::post('/add-enqueteur',['as'=>'add-enqueteur','uses'=>'EnqueteursController@store']);
     Route::put('/update-enqueteur/{id}',['as'=>'update-enqueteur','uses'=>'EnqueteursController@update']);
     Route::post('/delete-enqueteur',['as'=>'delete-enqueteur','uses'=>'EnqueteursController@destroy']);
     Route::get('/edit-enqueteur/{id}',['as'=>'edit-enqueteur','uses'=>'EnqueteursController@edit'] );
-    Route::get('/html/{id}',['as'=>'html','uses'=>'EnqueteursController@html']);
+    Route::get('/html/{id}/{id2}',['as'=>'html','uses'=>'EnqueteursController@html']);
     Route::get('delete-liaisonE/{id}/{id2}',['as'=>'delete-liaisonE','uses'=>'EnqueteursController@deleteLiaison']);
     Route::get('/all-enqueteur',['as'=>'all-enqueteur','uses'=>'EnqueteursController@affiche']);
     Route::get('liste-projet/{id}',['as'=>'liste-projet','uses'=>'EnqueteursController@liste_projet']);
-    Route::post('add-reponse/{id}',['as'=>'add-reponse','uses'=>'EnqueteursController@add_reponse']);
+    Route::post('add-reponse/{id}/{id2}',['as'=>'add-reponse','uses'=>'EnqueteursController@add_reponse']);
 });
 //group of administrateur
 Route::group(['prefix'=>'administrateur','middleware'=>['web']],function(){
@@ -62,4 +77,6 @@ Route::group(['prefix'=>'administrateur','middleware'=>['web']],function(){
     Route::get('/edit-administrateur/{id}',['as'=>'edit-administrateur','uses'=>'AdministrateursController@edit'] );
     Route::get('delete-liaisonA/{id}/{id2}',['as'=>'delete-liaisonA','uses'=>'AdministrateursController@deleteLiaison']);
     Route::get('/all-admin',['as'=>'all-admin','uses'=>'AdministrateursController@affiche']);
+    Route::get('liste-form/{id}',['as'=>'list-form','uses'=>'AdministrateursController@list_form']);
 });
+

@@ -83,28 +83,12 @@ class AdministrateursController extends Controller
      */
     public function edit($id)
     {
-         $tab=array();
-        $tabl = array();
-        $tableau=array();
-        $x=Projet::all();
-        $administrateurs = Administrateur::findOrFail($id);
         
-        foreach ($administrateurs->projets()->get() as $p)
-        {
-            $tab[$p->id]=$p->nom;              
-        }
+        $administrateur = Administrateur::findOrFail($id);
         
-        $adm_proj = $tab;
+        $projets = Projet::lists('nom','id');
         
-        foreach ($x as $pr)
-        {
-            $tabl[$pr->id]=$pr->nom;
-                      
-        }
-       
-        $projets=$tabl;
-        
-        return view('edit-administrateur', compact(['administrateurs','projets','adm_proj','tableau']));
+        return view('edit-administrateur', compact(['administrateur','projets']));
     }
 
     /**
@@ -116,18 +100,17 @@ class AdministrateursController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Administrateur::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
-        
-        if(isset($request->projets))
-         {  
-             foreach($request->projets as $projet){
-              
-                  Administrateur::find($id)->projets()->attach([$projet]);
-             }
-            
-         }
-        
-        return redirect(route('all-administrateur'));
+       $administrateur =  Administrateur::findOrFail($id);
+       
+       $administrateur->nom = $request->nom;
+       
+       $administrateur->mail = $request->mail;
+       
+       $administrateur->projets()->sync($request->projets);
+       
+       $administrateur->update();
+       
+       return redirect(route('all-admin'));
     }
     
     public function deleteLiaison($id,$id2){
@@ -162,5 +145,11 @@ class AdministrateursController extends Controller
         
         return view('all-admin', compact(['administrateurs', 'projets']));
         
+    }
+    
+    public function list_form($id){
+        $projet = Administrateur::find($id)->projets()->get();
+        $enqueteur = Administrateur::find($id);
+        return view('list_form',  compact(['projet','Administrateur']));
     }
 }

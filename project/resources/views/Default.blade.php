@@ -21,6 +21,8 @@
     {!! Html::style('project/resources/assets/css/font-awesome/css/font-awesome.min.css') !!}
     {!! Html::style('project/resources/assets/dist/css/form.css') !!}
     {!! Html::style('project/resources/assets/dist/css/bootstrap-wysihtml5.css') !!}
+    {!! Html::style('project/resources/assets/plugins/formbuilder/vendor/css/vendor.css') !!}
+    {!! Html::style('project/resources/assets/plugins/formbuilder/dist/formbuilder.css') !!}
     
     
 
@@ -122,7 +124,7 @@
                                 <span class="time"><i class="fa fa-clock-o"></i> 37 mins.</span>
                             </a>
                             <a href="#" class="item last">
-                                <img src="{{url('project/resources/assets/dist/img/user_4.png')}}user_4.png" class="display" alt="user" />
+                                <img src="{{url('project/resources/assets/dist/img/user_4.png')}}" class="display" alt="user" />
                                 <div class="name">Warm Sleepy</div>
                                 <div class="msg">
                                 Hello, how are you? i just though you were here, i'll see you tomorrow.
@@ -143,7 +145,7 @@
                         <li><a href="profile.html">Profile</a></li>
                         <li><a href="#">Settings</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Sign Out</a></li>
+                        <li><a href="{{ url('/logout') }}">Sign Out</a></li>
                     </ul>
             </li>
         </ul>
@@ -253,7 +255,8 @@
     </div>
 
 <!-- scripts -->
-    <script src="{{url('project/resources/assets/plugins/formbuilder/dist/formbuilder.js')}}"></script>
+    
+    
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <!--<script src="{{url('project/resources/assets/js/jquery.min.js')}}"></script>-->
     <script src="{{url('project/resources/assets/js/bootstrap.js')}}"></script>
@@ -271,16 +274,18 @@
 
 
     <script src="{{url('project/resources/assets/js/tables/jquery.peity.min.js')}}"></script>
-    <script src="{{url('project/resources/assets/js/tables/peity-demo.js')}}"></script>
+   <script src="{{url('project/resources/assets/js/tables/peity-demo.js')}}"></script>
     <script src="{{url('project/resources/assets/js/tables/icheck.min.js')}}"></script>
 
     <!--wysiwyg editor -->
     <script src="{{url('project/resources/assets/js/editor/wysihtml5-0.3.0.js')}}"></script>
     <script src="{{url('project/resources/assets/js/editor/bootstrap3-wysihtml5.js')}}"></script>
+    
 
     <!--<script src="{{url('project/resources/assets/js/index.js')}}"></script>-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
      <script type="text/javascript">
         //wysihtml5
        $('.textarea').wysihtml5({

@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-
+use DB;
 use App\Enqueteur;
 use App\Projet;
+use Illuminate\Support\Facades\Schema as Schema;
 
 class EnqueteursController extends Controller
 {
@@ -80,28 +81,14 @@ class EnqueteursController extends Controller
      */
     public function edit($id)
     {  
-        $tab=array();
-        $tabl = array();
-        $tableau=array();
-        $x=Projet::all();
-        $enqueteurs = Enqueteur::findOrFail($id);
         
-        foreach ($enqueteurs->projets()->get() as $p)
-        {
-            $tab[$p->id]=$p->nom;              
-        }
+        $enqueteur = Enqueteur::findOrFail($id);
         
-        $enq_proj = $tab;
+        $projets = Projet::lists('nom','id');
         
-        foreach ($x as $pr)
-        {
-            $tabl[$pr->id]=$pr->nom;
-                      
-        }
        
-        $projets=$tabl;
         
-        return view('edit-enqueteur', compact(['enqueteurs','projets','enq_proj','tableau']));
+        return view('edit-enqueteur', compact(['enqueteur','projets']));
     }
 
     /**
@@ -114,20 +101,16 @@ class EnqueteursController extends Controller
    public function update(Request $request, $id)
     {
         
-        $en=Enqueteur::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
+        $enqueteur = Enqueteur::findOrFail($id);
        
+        $enqueteur->nom = $request->nom;
         
+        $enqueteur->mail = $request->mail;
         
-         if(isset($request->projets))
-         {  
-             foreach($request->projets as $projet){
-              
-                  Enqueteur::find($id)->projets()->attach([$projet]);
-             }
-            
-         }
+        $enqueteur->projets()->sync($request->projets);
         
-       
+        $enqueteur->update();
+        
         return redirect(route('all-enqueteur'));
         
     }
@@ -135,7 +118,7 @@ class EnqueteursController extends Controller
     public function deleteLiaison($id,$id2){
          
        
-        Enqueteur::find($id)->projets()->detach([$id2]);
+        Enqueteur::findOrFail($id)->projets()->detach([$id2]);
          
         return 'true';
     }
@@ -157,12 +140,16 @@ class EnqueteursController extends Controller
         return redirect(route('all-enqueteur'));
     }
     
-    public function html($id){
+    public function html($id,$id2){
         
-        $projet = Projet::findOrFail($id);
-        $l="";
-        return view('html',  compact('projet','l'));
-                 
+        $cond = Controller::InProjet($id2,$id,'enq');
+        if($cond){
+            $projet = Projet::findOrFail($id2);
+            $enqueteur = Enqueteur::findOrFail($id);
+            return view('html',  compact('projet', 'enqueteur'));
+        } else{
+            return abort(503);
+        }    
     }
     
     public function affiche(){
@@ -175,11 +162,47 @@ class EnqueteursController extends Controller
     
     public function liste_projet($id){
         $projet = Enqueteur::find($id)->projets()->get();
-        return view('liste-projet',  compact(['projet']));
+        $enqueteur = Enqueteur::find($id);
+        return view('liste-projet',  compact(['projet','enqueteur']));
     }
     
-    public function add_reponse(Request $request, $id){
-        dd($request);
-        DB::insert('insert into users (id, name) values (?, ?)', [1, 'Dayle']);
+    public function add_reponse(Request $request, $id, $id2){
+        $champs = array();
+        
+        $projet = Projet::findOrFail($id2);
+        
+        $html = json_decode($projet->projet_html);
+        
+        foreach($html as $ch){
+            foreach($ch as $c){
+               array_push($champs, $c->field_options->description);
+            }
+        }
+        if(Schema::hasTable($projet->reponses_table)){
+            $nb_reponses = DB::table($projet->reponses_table)->count();
+        
+            $nombre_max = $projet->nombre_max;
+
+            if($nb_reponses <= $nombre_max){
+                $this->submitAll($request, $projet->reponses_table, $champs );
+            }
+        }
+        return redirect()->back();
     }
+    
+    public function submitAll($req,  $table, $champs){
+        $values = array();
+       
+        foreach ($champs as $ch){
+           $values[$ch] = $req->$ch; 
+        }
+        
+        unset($values['_token']);
+        unset($values['json']);
+       
+        DB::table($table)->insert($values);
+        
+            
+    }
+    
 }

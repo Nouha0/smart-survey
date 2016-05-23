@@ -209,6 +209,7 @@ return [
         'Form'      => Illuminate\Html\FormFacade::class,
         'Html'      =>Illuminate\Html\HtmlFacade::class,
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
+        'Debugbar' => Barryvdh\Debugbar\Facade::class,
         
 
     ],

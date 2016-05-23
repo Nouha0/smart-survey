@@ -83,28 +83,12 @@ class clientsController extends Controller
      */
     public function edit($id)
     {
-        $tab=array();
-        $tabl = array();
-        $tableau=array();
-        $x=Projet::all();
-        $clients = Client::findOrFail($id);
-        
-        foreach ($clients->projets()->get() as $p)
-        {
-            $tab[$p->id]=$p->nom;              
-        }
-        
-        $client_proj = $tab;
-        
-        foreach ($x as $pr)
-        {
-            $tabl[$pr->id]=$pr->nom;
-                      
-        }
        
-        $projets=$tabl;
+        $client = Client::findOrFail($id);
         
-        return view('edit-client', compact(['clients','projets','client_proj','tableau']));
+        $projets = Projet::lists('nom', 'id');
+        
+        return view('edit-client', compact(['client','projets']));
     }
 
     /**
@@ -116,16 +100,15 @@ class clientsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        client::where('id',$id)->update(['nom'=> $request->nom,'mail'=> $request->mail]);
+        $client = Client::findOrFail($id);
         
-         if(isset($request->projets))
-         {  
-             foreach($request->projets as $projet){
-              
-                  Client::find($id)->projets()->attach([$projet]);
-             }
-            
-         }
+        $client->nom = $request->nom;
+        
+        $client->mail = $request->mail;
+        
+        $client->projets()->sync($request->projets);
+        
+        $client->update();
         
         return redirect(route('all-client')); 
     }

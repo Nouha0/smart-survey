@@ -6,7 +6,7 @@
 <div class="form-group">
     <ul>
     @foreach($projet as $p)
-        {!! Form::open(['method'=>'GET','url'=>route('html',$p->id)])  !!}
+        {!! Form::open(['method'=>'GET','url'=>route('html',[$enqueteur->id,$p->id])])  !!}
         <div class="row">
             <div class="col-md-1">
             <li>{{$p->nom}}</li>
