@@ -29,7 +29,7 @@
                                 @endforeach
                             </td>
                             <td>
-                                <a  data-toggle="tooltip" data-placement="top" title="voir le formulaire" href="" class="btn btn-info btn-xs pull-left"><i class="fa fa-database" aria-hidden="true"></i></a>            
+                                <a  data-toggle="tooltip" data-placement="top" title="voir le formulaire" href="{{route('list_p',$client->id)}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-database" aria-hidden="true"></i></a>            
                                 <a href="{{route('edit-client', $client->id)}}" class="btn btn-success btn-xs pull-left"  data-toggle="tooltip" data-placement="top" title="Modifier le projet"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
             
                                 {!! Form::open(['method'=>'POST','url'=>route('delete-client'), 'class'=>'pull-left'])  !!}

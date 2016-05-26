@@ -52,7 +52,7 @@
       <label>@{{label}}</label><br/>
         @{{#field_options.options}}
           
-            <input type="checkbox" name="@{{field_options.description}}" value="@{{label}}" > @{{label}}
+            <input type="checkbox" name="@{{field_options.description}}[]" value="@{{label}}" > @{{label}}
             <br/>
         @{{/field_options.options}}
         <br/>

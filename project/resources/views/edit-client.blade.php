@@ -24,7 +24,8 @@
             </div>
         </div>
         <br />
-        <button class="btn btn-success" type="submit">modifier</button>    
+        <button class="btn btn-success pull-right" type="submit">modifier</button> 
+        <a href="{{route('all-client')}}" class="btn btn-info">Retour</a>
     </div>
     <div class="col-md-4">
         <div class="row">

@@ -17,7 +17,7 @@
                 {!! Form::hidden('projet_html',null,[ 'class'=>'form-json']) !!}
                 {!! Form::hidden('id',$projet->id,[]) !!}
                 <br />
-                <button class="btn btn-success" type="submit">créer le formulaire</button>
+                <button class="btn btn-success pull-right" type="submit">créer le formulaire</button>
             {!! Form::close() !!}
     
 @endsection

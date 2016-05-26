@@ -10,6 +10,8 @@ use App\Administrateur;
 
 use App\Projet;
 
+use DB;
+
 class AdministrateursController extends Controller
 {
     /**
@@ -52,14 +54,20 @@ class AdministrateursController extends Controller
     {
         $administrateurs = $this->create($request);
         
-        $administrateurs->save();
+       
+     
+        $validateur = \Validator::make($request->all(),[
+                       'nom'=>'required',
+                       'mail'=> 'required|email|max:255'
+        ]);
+        if($validateur->fails()){
+            return redirect()->back()->withErrors($validateur->errors());
+        }else{
+             $administrateurs->save();
         
-        $administrateurs->projets()->attach($request->projets);
-        
-        //$administrateurs->firstOrCreate(['mail'=> $request->mail]);
-        
-        
-        return redirect(route('affiche-administrateur'));
+            $administrateurs->projets()->attach($request->projets);
+            return redirect(route('affiche-administrateur'));
+        }
     }
 
     /**
@@ -108,9 +116,17 @@ class AdministrateursController extends Controller
        
        $administrateur->projets()->sync($request->projets);
        
-       $administrateur->update();
+        $validateur = \Validator::make($request->all(),[
+                       'nom'=>'required',
+                       'mail'=> 'required|email|max:255'
+         ]);
+         if($validateur->fails()){
+             return redirect()->back()->withErrors($validateur->errors());
+         }else{
+                $administrateur->update();
        
-       return redirect(route('all-admin'));
+                return redirect(route('all-admin'));
+         }
     }
     
     public function deleteLiaison($id,$id2){
@@ -146,10 +162,17 @@ class AdministrateursController extends Controller
         return view('all-admin', compact(['administrateurs', 'projets']));
         
     }
-    
+    /*
+     * id = administarteur_id
+     * id2 = projet_id
+     */
     public function list_form($id){
-        $projet = Administrateur::find($id)->projets()->get();
-        $enqueteur = Administrateur::find($id);
-        return view('list_form',  compact(['projet','Administrateur']));
+        $projet = Administrateur::findOrFail($id)->projets()->get();
+        $administrateur = Administrateur::findOrFail($id);
+        
+        foreach($projet as $p){
+            $p->reponses = DB::table($p->reponses_table)->count();  
+        }
+        return view('list_form',  compact(['projet','administrateur']));
     }
 }

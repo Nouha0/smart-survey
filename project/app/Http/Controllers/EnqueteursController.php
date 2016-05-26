@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests;
-use DB;
 use App\Enqueteur;
 use App\Projet;
+use DB;
+use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\Schema as Schema;
 
 class EnqueteursController extends Controller
@@ -36,7 +36,8 @@ class EnqueteursController extends Controller
         
         $enqueteur->nom = $request->nom;
         $enqueteur->mail = $request->mail;
-        $enqueteur->photo = Controller::storeUpload('photo');
+        $enqueteur->photo = url('https://gravatar.com/avatar/');
+                //Controller::storeUpload('photo');
         //$enqueteurs->created_by = $request->created_by;
         
         return $enqueteur;
@@ -53,11 +54,21 @@ class EnqueteursController extends Controller
         
         $enqueteurs = $this->create($request);
         
-        $enqueteurs->save();
+       
         
-        $enqueteurs->projets()->attach($request->projets);
+         $validateur = \Validator::make($request->all(),[
+                       'nom'=>'required',
+                       'mail'=> 'required|email|max:255',
+         ]);
+         if($validateur->fails()){
+             return redirect()->back()->withErrors($validateur->errors());
+         }else{
+             $enqueteurs->save();
+             $enqueteurs->projets()->attach($request->projets);
+             return redirect(route('affiche-enqueteur')) ;
+         }
         
-        return redirect(route('affiche-enqueteur')) ; 
+        
     }
 
     /**
@@ -86,9 +97,11 @@ class EnqueteursController extends Controller
         
         $projets = Projet::lists('nom','id');
         
-       
+        $photo = $enqueteur->photo;
         
-        return view('edit-enqueteur', compact(['enqueteur','projets']));
+        
+        return view('edit-enqueteur', compact(['enqueteur','projets','photo']));
+        
     }
 
     /**
@@ -107,11 +120,22 @@ class EnqueteursController extends Controller
         
         $enqueteur->mail = $request->mail;
         
+        $enqueteur->photo = Controller::storeUpload('photo');
+        
         $enqueteur->projets()->sync($request->projets);
         
-        $enqueteur->update();
-        
-        return redirect(route('all-enqueteur'));
+         $validateur = \Validator::make($request->all(),[
+                       'nom'=>'required',
+                       'mail'=> 'required|email|max:255',
+                       'photo'=>'image',
+         ]);
+         if($validateur->fails()){
+             return redirect()->back()->withErrors($validateur->errors());
+         }else{
+            $enqueteur->update();
+
+            return redirect(route('all-enqueteur'));
+         }
         
     }
     
@@ -168,7 +192,7 @@ class EnqueteursController extends Controller
     
     public function add_reponse(Request $request, $id, $id2){
         $champs = array();
-        
+        //dd($request);
         $projet = Projet::findOrFail($id2);
         
         $html = json_decode($projet->projet_html);
@@ -179,13 +203,12 @@ class EnqueteursController extends Controller
             }
         }
         if(Schema::hasTable($projet->reponses_table)){
-            $nb_reponses = DB::table($projet->reponses_table)->count();
+            //$nb_reponses = DB::table($projet->reponses_table)->count();
         
-            $nombre_max = $projet->nombre_max;
+            //$nombre_max = $projet->nombre_max;
 
-            if($nb_reponses <= $nombre_max){
-                $this->submitAll($request, $projet->reponses_table, $champs );
-            }
+            $this->submitAll($request, $projet->reponses_table, $champs );
+            
         }
         return redirect()->back();
     }
@@ -194,7 +217,11 @@ class EnqueteursController extends Controller
         $values = array();
        
         foreach ($champs as $ch){
-           $values[$ch] = $req->$ch; 
+            if(is_array($req->$ch)){
+                $values[$ch] = json_encode($req->$ch); 
+            }else{
+                $values[$ch] = $req->$ch; 
+            }
         }
         
         unset($values['_token']);

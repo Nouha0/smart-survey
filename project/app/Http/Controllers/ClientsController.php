@@ -35,7 +35,7 @@ class clientsController extends Controller
         
         $client->nom = $request->nom;
         $client->mail = $request->mail;
-        $client->photo = Controller::storeUpload('photo');
+        $client->photo = url('https://gravatar.com/avatar/');
         //$client->created_by = $request->created_by;
         
         return $client;
@@ -52,14 +52,21 @@ class clientsController extends Controller
         
         $client = $this->create($request);
         
-        $client->save();
         
-        $client->projets()->attach($request->projets);
        
         //$client->firstOrCreate(['mail'=> $request->mail]);
-       
+        $validateur = \Validator::make($request->all(),[
+                       'nom'=>'required',
+                       'mail'=> 'required|email|max:255'
+         ]);
+         if($validateur->fails()){
+             return redirect()->back()->withErrors($validateur->errors());
+         }else{
+             $client->save();
         
-        return redirect(route('affiche-client'));
+             $client->projets()->attach($request->projets);
+            return redirect(route('affiche-client'));
+         }
     }
 
     /**
@@ -88,7 +95,9 @@ class clientsController extends Controller
         
         $projets = Projet::lists('nom', 'id');
         
-        return view('edit-client', compact(['client','projets']));
+        $photo = Controller::getImages($client->photo);
+        
+        return view('edit-client', compact(['client','projets','photo']));
     }
 
     /**
@@ -106,11 +115,22 @@ class clientsController extends Controller
         
         $client->mail = $request->mail;
         
+        $client->photo = Controller::storeUpload('photo');
+        
         $client->projets()->sync($request->projets);
         
-        $client->update();
+         $validateur = \Validator::make($request->all(),[
+                       'nom'=>'required',
+                       'mail'=> 'required|email|max:255'
+         ]);
+         if($validateur->fails()){
+             return redirect()->back()->withErrors($validateur->errors());
+         }else{
         
-        return redirect(route('all-client')); 
+                $client->update();
+        
+                return redirect(route('all-client')); 
+         }
     }
     
     public function deleteLiaison($id,$id2){
@@ -145,5 +165,12 @@ class clientsController extends Controller
         $projets = Projet::Lists('nom','id');
         
         return view('all-client', compact(['clients','projets']));
+    }
+    
+    public function list_p($id){
+        $client = Client::findOrFail($id);
+        $projets = $client->projets()->get();
+        
+        return view('list_p',  compact(['client','projets']));
     }
 }

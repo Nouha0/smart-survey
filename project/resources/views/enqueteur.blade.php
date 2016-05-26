@@ -5,16 +5,23 @@
 @section('content')
 
 <div class="container">
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach($errors->all() as $error)
+                <li>
+                    {{$error}}
+                </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
    {!! Form::open(['method'=>'POST','url'=>route('add-enqueteur'),'files'=>true]) !!}
     <div class="form-group">
         <div class="row">
             <div class="col-md-8">
                 {!! Form::label('', 'nom') !!}
                 {!! Form::text('nom', null,['placeholder'=>'nom', 'class'=>'form-control']) !!}
-            </div>
-         
-            <div class="col-md-4">
-                {!! Form::file('photo', null,['placeholder'=>'browse', 'class'=>'form-control']) !!}
             </div>
         </div>
     </div>

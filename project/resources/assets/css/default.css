@@ -778,8 +778,34 @@ footer i:hover{
     
 }
 td .btn {
-    margin-right: 10px;
+    margin-right: 4px;
 }
 .barre_progression .progress {
         height: 8px;
 }
+    .libeles h5 span {
+        color: #157E7D;
+        font-size: 15px;
+        font-weight: 400;
+    }
+    .libeles p {
+        font-size: 15px;
+        margin-top: 6px;
+    }
+    .libeles h5{
+        font-size: 40px;
+        margin-top: 0 !important;
+        color: #B71F78;
+        font-weight: 600;
+    }
+
+    .libeles h5 span{
+     
+    font-size: 24px; }
+    .panel-body.no-padding.libeles{
+        position: relative;
+        padding: 5px 15px !important;
+        text-align: left;
+        background: #FFF;
+        border-radius: 8px;
+    }

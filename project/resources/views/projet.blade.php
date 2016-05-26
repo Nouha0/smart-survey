@@ -32,7 +32,7 @@
         </div>
         <div class="col-md-6">
             {!! Form::label('', 'Nombre max d\'envoie') !!}
-            {!! Form::text('nombre_max',null,['placehorlder'=>'Nombre max','class'=>'form-control']) !!}
+            {!! Form::text('nombre_max',null,['placehorlder'=>'Nombre max','class'=>'form-control','required'=>'required']) !!}
 
         </div>
     </div>

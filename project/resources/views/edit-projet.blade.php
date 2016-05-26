@@ -25,13 +25,15 @@
         <label class="control-label"> Administrateurs associées</label>
             {!! Form::select('administrateurs[]',$administrateurs, $projet->administrateurs()->lists('administrateurs.id')->toArray(),['class'=>'bg-focus form-control select-2', 'multiple'=>true, 'required'=>true]) !!}
         </div>
-        @if(!empty($liste_champs) && !empty($liste_champs))
+   
+        @if(!empty($liste_champs) || !empty($champs))
+        
        <div class="form-group">
            <label >Valeurs statistiques sélélectionnés</label><br />
-                @if(isset($liste_champs)&& !empty($liste_champs) || isset($diff)&& !empty($diff))
+                @if(isset($liste_champs)&& !empty($liste_champs))
                     @foreach($liste_champs as $l)
                         
-                            <input type="checkbox" name="list_champs[{{$l}}]"checked="true" > {{$l}}
+                            <input type="checkbox" name="list_champs[{{$l}}]" checked="true" > {{$l}}
                        
                     @endforeach
                     @foreach($diff as $k => $v)
@@ -39,14 +41,24 @@
                             <input type="checkbox" name="list_champs[{{$k}}]" > {{$v}}
                         
                     @endforeach
-                @endif
+               
+                @else
+                @foreach($champs as $k => $v)
+                        
+                            <input type="checkbox" name="list_champs[{{$k}}]" > {{$v}}
+                        
+                    @endforeach
+                 @endif
+                
         </div>
         @endif
         <div class="form-group">
             {!! Form::label('','Nombre d\'envoie max') !!}
             {!! Form::text('nombre_max', null,['placeholder'=>'nombre max', 'class'=>'form-control']) !!}
             <br/>
-            <button class='btn btn-success pull-right' type='submit'>modifier</button>
+            
+            <button class='btn btn-success pull-right' type='submit'>Terminer la modification</button>
+            <a href="{{route('formulaire', $projet->id)}}" class="btn btn-info pull-right">Modifer le formulaire</a>
             <a href="{{route('all-projet')}}" class="btn btn-info">Retour</a>
         </div>
     </div>

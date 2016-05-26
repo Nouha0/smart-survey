@@ -54,10 +54,15 @@
                                 @endforeach
                             </td>
                             <td>
-                                @if(!empty($projet->projet_html))<a  data-toggle="tooltip" data-placement="top" title="voir les reponses" href="{{route('reponse',$projet->id )}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-eye" aria-hidden="true"></i></a>@endif            
+                                <a  data-toggle="tooltip" data-placement="top" title="Dupliquer le projet" href="{{route('dupliquer-projet',$projet->id )}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-clone" aria-hidden="true"></i></a>
+                                <a  data-toggle="tooltip" data-placement="top" title="Modifier le type de graphe" class="btn btn-info btn-xs pull-left" href="{{route('build-graph',$projet->id )}}"><i class=" fa fa-line-chart" aria-hidden="true"> </i></a>
+                                @if(!empty($projet->projet_html) && $projet->reponses != 0)
+                                    <a  data-toggle="tooltip" data-placement="top" title="voir les reponses" href="{{route('reponse',$projet->id )}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-eye" aria-hidden="true"></i></a>
+                                @endif
+                                @if($projet->reponses == 0)
                                 <a  data-toggle="tooltip" data-placement="top" title="modifier le formulaire" href="{{route('formulaire',$projet->id )}}" class="btn btn-info btn-xs pull-left"><i class="fa fa-database" aria-hidden="true"></i></a>            
+                                @endif
                                 <a href="{{route('edit-projet', $projet->id)}}" class="btn btn-success btn-xs pull-left"  data-toggle="tooltip" data-placement="top" title="Modifier le projet"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
-            
                                 {!! Form::open(['method'=>'POST','url'=>route('delete-projet'), 'class'=>'pull-left'])  !!}
                   
                                     {!! Form::hidden('id',$projet->id) !!} 

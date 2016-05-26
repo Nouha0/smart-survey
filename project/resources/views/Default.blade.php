@@ -145,7 +145,7 @@
                         <li><a href="profile.html">Profile</a></li>
                         <li><a href="#">Settings</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ url('/logout') }}">Sign Out</a></li>
+                        <li><a href="">Sign Out</a></li>
                     </ul>
             </li>
         </ul>
@@ -286,7 +286,16 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
-     <script type="text/javascript">
+     
+    
+    
+     
+    
+
+    <script src="{{url('project/resources/assets/js/tables/jquery.jeditable.js')}}"></script>
+    <script src="{{url('project/resources/assets/js/tables/jquery.dataTables.js')}}"></script>
+    <script src="{{url('project/resources/assets/js/tables/dataTables.bootstrap.js')}}"></script>
+    <script type="text/javascript">
         //wysihtml5
        $('.textarea').wysihtml5({
         "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true

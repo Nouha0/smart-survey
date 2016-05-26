@@ -5,19 +5,21 @@
 @section('content')
 <div class="form-group">
     <ul>
-    @foreach($projet as $p)
-       @if($p->reponses == 0)
+    @foreach($projets as $p)
+        @if(!empty($p->list_champs))
         <div class="row">
             <div class="col-md-5">
             <li>{{$p->nom}}</li>
             </div>
             <div class="col-md-2">
-                <a href="{{route('formulaire', $p->id)}}">voir</a>
+                
+                <a href="{{route('reponse', $p->id)}}">voir</a>
+               
             </div>
         </div>
-        @endif
+         @endif
     @endforeach
     </ul>
-     <a href="{{route('all-admin')}}" class="btn btn-info">Retour</a>
+     <a href="{{route('all-client')}}" class="btn btn-info">Retour</a>
 </div>
 @endsection

@@ -20,6 +20,8 @@ class CreateProjetsTable extends Migration
             $table->text('projet_html');
             $table->integer('nombre_max');
             $table->text('list_champs');
+            $table->text('champs_croises');
+            $table->text('libelles');
             /*$table->integer('created_by')->unsigned();
             $table->foreign('created_by')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');*/
             $table->date('projet_end');

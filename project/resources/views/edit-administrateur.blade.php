@@ -24,7 +24,8 @@
                     {!! Form::select('projets[]',$projets, $administrateur->projets()->lists('projets.id')->toArray(),['class'=>'bg-focus form-control select-2', 'multiple'=>true, 'required'=>true]) !!}
                 </div>
                 <br />
-                <button class ="btn btn-success" type="submit">modifier</button>
+                <button class ="btn btn-success pull-right" type="submit">modifier</button>
+                <a href="{{route('all-admin')}}" class="btn btn-info">Retour</a>
             {!! Form::close() !!}
         </div>
     </div>
