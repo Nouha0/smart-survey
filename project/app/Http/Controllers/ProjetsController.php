@@ -269,23 +269,32 @@ class ProjetsController extends Controller
         $id = $projet->id;
         $champs =array();
         $libelles = array();
+        $i = 0;
         foreach ($json->fields as $j){
+            
             if($j->field_type == "checkboxes" || $j->field_type == "radio" || $j->field_type == "select" ){
+                $libelles[$j->field_options->description] = array();
                 $champs[$j->field_options->description] = $j->label;
+                foreach($j->field_options->options as $opt){
+                    //dd($opt);
+                   
+                 //$libelles[$j->field_options->description] = $opt->label;
+                 $libelles[$j->field_options->description][$i] = $opt->label;
+                 $i++;
+                }
+                
             }
-            /*$libelles[$j->field_options->description] = array();
-            dd($j->field_options->options);
-            $libelles[$j->field_options->description] = $j->field_options->options;*/
+           /* 
+            }*/
         }
-        
         //dd($libelles);
         //dd();
-        return view('build-graph', compact(['projet', 'champs']));
+        return view('build-graph', compact(['projet', 'champs','libelles']));
     }
     
     public function buildGraphPut(Request $request){
         $projet = Projet::findOrFail($request->id);
-        
+        //dd($request);
         $elements = $request->names;
         
         $champs = array();
@@ -297,7 +306,7 @@ class ProjetsController extends Controller
 
         $projet->list_champs = json_encode($champs);
         $projet->champs_croises =$this->requestJson($request->champs_croises);
-
+        $projet->libelles = $this->requestJson($request->libelles);
         
         $projet->update();
         
@@ -358,9 +367,8 @@ class ProjetsController extends Controller
         $reponse = $projet->reponses_table;
         $json = json_decode($projet->projet_html);
         
-        $champs = $names= $options =array();
+        $champs = $names= $options =$comparer=array();
         $list_champs = json_decode($projet->list_champs);
-        $options = array();
         $r = DB::table($reponse)->select()->get();
         $list_compare = json_decode($projet->champs_croises);
         
@@ -371,24 +379,13 @@ class ProjetsController extends Controller
             array_push($champs,$j->label);
             array_push($names, $j->field_options->description);   
         }
-      if(!empty($list_champs)){ 
-       foreach($list_champs as $ch){
-            foreach ($json->fields as $j){
-                $o = [];
-                
-                if($j->field_options->description == $ch){
-                    
-                    foreach($j->field_options->options as $opt){
-                        $o[$this->phr($opt->label)] = 0;
-                    }
-                    $options[$ch] = array();
-                    $options[$ch]= $o;
-                    
-                }
-            }
-        }
-        $compare = $options;
-       // dd($j->field_options->options);
+        
+      
+        $compare = $this->setValues($this->getKeysCompare($list_compare), $json);
+        $options = $this->setValues($list_champs, $json);
+        
+      
+        if(!empty($list_champs)){
         foreach($list_champs as $op){
             foreach($r as $obj){
                 if(!empty($obj) && !empty($obj->$op)){
@@ -406,20 +403,25 @@ class ProjetsController extends Controller
                 }
             }
         }
-      }
+        }
+      
       
       /*
       *champs croisés
       */
-    $comparer = array();
+
+    //dd($compare);
+   
      foreach($list_compare as $comparaison){
           foreach($comparaison as $obj_1 => $obj_2){
-            //echo ($obj_1 .' '. $obj_2.'<br>');
+            echo ($obj_1 .' '. $obj_2.'<br>');
             foreach($compare[$obj_1] as $k=>$v){
                 $comparer[$obj_1.'-'.$obj_2][$k]= $compare[$obj_2]; 
             }
           }
      }
+     
+     //dd($comparer);
    
      foreach($r as $l){
         foreach($list_compare as $comparaison){
@@ -448,38 +450,117 @@ class ProjetsController extends Controller
      *Libélé sous la forme [0=>['genre'=>Homme, 'chocolat'=>jaime, 'ville'=>Tunis, 'travail'=>oui]]
      * $r $l =                 [genre=>femme, chocolat=>jaime, ville=>tunis, travail=>non]
      */
-    /* dd($projet);
-      $keys = [['nom','genre', 'chocolat'], ['genre', 'chocolat']];
-      $libeles = json_decode($projet->champs_croises);
-      $j=1;
-      $res_libel = array();
-      foreach($r as $l){
-        foreach ($libeles as $index=>$libele) {
-            foreach ($keys[$index] as $val) {
-                if($l->$val == $libele[$val]){
-                    $j++;
-                }
-                //echo $l->$val.' - '.$libele[$val].'-'. $j.'<br>';
-                if($j == count($keys[$index])){
-                    
-                    if(isset($res_libel[$index]) && !empty( $res_libel[$index])){
-                         $res_libel[$index]=intval($res_libel[$index])+1;
-                    }
-                    else {
-                        $res_libel[$index]=1;
-                    }
-                    $j=0;
-                }
+   
+      //$keys = [['nom','genre', 'chocolat'], ['genre', 'chocolat']];
+     
+      $keys = array();
+      $libeles = json_decode($projet->libelles,true);
+      $i = $j = 0;
+       //dd($libeles);
+      if(!empty($libeles)){
+        foreach($libeles as $l => $li){
+              $keys[] = array_keys($li);
+        }
+        
+        
+        $j=1;
+        $res_libel = array();
+        /*
+        //dd($r);
+        foreach($r as $l){
+            dd($l);
+          foreach ($libeles as $index=>$libele) {
+              
+              foreach ($keys[$index] as $val) {
+                  $res_libel = $libele[$val];
+                  //dd($res_libel);
+                   echo $l->$val.'-'.$libele[$val].' '.$j.' '.count($keys[$index]).'<br>';
+                  if($l->$val == $libele[$val] ){ 
+                      $j++;
+                    if($j == count($keys[$index])){
+                            echo $index;
+                          if(isset($res_libel[$index]) && !empty( $res_libel[$index])){
+
+                               $res_libel[$index]=intval($res_libel[$index])+1;
+                               $j=0;
+                          }
+                          else {
+                              $res_libel[$index]=1;
+                              $j=0;
+                          }
+                          
+                      }
+                  }
+                  elseif(is_array(json_decode($libele[$val], true))){
+                      if(in_array($l->$val,json_decode($libele[$val] ))){
+                          $j++;
+                            if($j == count($keys[$index])){
+                                echo $index;
+                              if(isset($res_libel[$index]) && !empty( $res_libel[$index])){
+                                   $res_libel[$index]=intval($res_libel[$index])+1;
+                                   $j=0;
+                              }
+                              else {
+                                  $res_libel[$index]=1;
+                                  $j=0;
+                              }
+                              
+                          }
+                      }
+                  }
+              }
+              $j=0;
+          }
+
+
+      }
+    }
+    dd($res_libel);
+      * 
+      */
+        dd($libeles);
+        $m = 0;
+     foreach ($r as $l ){
+         foreach($keys as $k){
+             foreach($libeles as $index => $v){
+                 foreach($v as $cle => $val){
+                     foreach ($k as $c){
+                        if($l->$c == $val){
+                            $m++;
+                        }elseif (is_array($l->$c)) {
+                            foreach($l->$c as $value){
+                                dd($value);
+                            }
+                        }
+                     }
+                 }
+             }
+         }
+     }
+     dd($m);
+            return view('reponse',  compact(['projet', 'r', 'champs', 'names','options', 'comparer', 'res_libel']));
+    
+        }
+    
+    }
+    
+    
+    public function libeles($res_libel, $j, $index, $keys) {
+        
+        if($j == count($keys[$index])){
+              echo $index;
+            if(isset($res_libel[$index]) && !empty( $res_libel[$index])){
+
+                 $res_libel[$index]=intval($res_libel[$index])+1;
+            }
+            else {
+                $res_libel[$index]=1;
             }
             $j=0;
         }
-        
-
+        return $res_libel;
     }
-    dd($res_libel);*/
-     
-            return view('reponse',  compact(['projet', 'r', 'champs', 'names','options', 'comparer', 'res_libel']));
-    }
+    
     
     public function phr($obj){
         return str_replace(" ", "-", $obj);
@@ -493,6 +574,50 @@ class ProjetsController extends Controller
         return $inverse;
     }
     
-    
+    public function setValues($liste, $json){
+       $options = array();
+       if(!empty($liste)){ 
+            foreach($liste as $ch){
+                 foreach ($json->fields as $j){
+                     $o = [];
 
+                     if($j->field_options->description == $ch){
+
+                         foreach($j->field_options->options as $opt){
+                             $o[$this->phr($opt->label)] = 0;
+                         }
+                         $options[$ch] = array();
+                         $options[$ch]= $o;
+
+                     }
+                 }
+             }
+         }
+         return $options;
+    }
+    
+    public function getKeys($objs){
+        $cle = array();
+        foreach ($objs as $obj){
+            foreach ($obj as $v=>$vl){
+                $cle[] = $v;
+            }
+        }
+        return $cle ;
+    }
+    
+    public function getKeysCompare($objs){
+        $cle = array();
+        foreach ($objs as $obj){
+            foreach ($obj as $v=>$vl){
+                if(!in_array($v, $cle)){
+                    $cle[] = $v;
+                }
+                if(!in_array($vl, $cle)){
+                    $cle[] = $vl;
+                }
+            }
+        }
+        return $cle ;
+    }
 }
