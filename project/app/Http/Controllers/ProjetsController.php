@@ -463,39 +463,45 @@ class ProjetsController extends Controller
         }
         
         
-        $j=1;
+        $j=0;
         $res_libel = array();
-        /*
+        
         //dd($r);
         foreach($r as $l){
-            dd($l);
+            //dd($l);
           foreach ($libeles as $index=>$libele) {
               
               foreach ($keys[$index] as $val) {
-                  $res_libel = $libele[$val];
-                  //dd($res_libel);
-                   echo $l->$val.'-'.$libele[$val].' '.$j.' '.count($keys[$index]).'<br>';
+                  //$res_libel = $libele[$val];
+                  //dd($res_libel[$val]);
+                   //echo $l->$val.'-'.$libele[$val].' '.$j.' '.count($keys[$index]).'<br>';
+                   //dd(json_decode($l->$val));
                   if($l->$val == $libele[$val] ){ 
-                      $j++;
+                      $j++;                      
+                      //echo '<strong>'.$j.'</strong>';
                     if($j == count($keys[$index])){
-                            echo $index;
+                            //echo $index;
+                        
                           if(isset($res_libel[$index]) && !empty( $res_libel[$index])){
 
                                $res_libel[$index]=intval($res_libel[$index])+1;
-                               $j=0;
+                               //$j=0;
                           }
                           else {
                               $res_libel[$index]=1;
-                              $j=0;
+                              //$j=0;
                           }
                           
                       }
                   }
-                  elseif(is_array(json_decode($libele[$val], true))){
-                      if(in_array($l->$val,json_decode($libele[$val] ))){
+                  elseif(is_array(json_decode($l->$val, true))){
+                      //dd(is_array(json_decode($l->$val, true)));
+                      if(in_array($libele[$val],json_decode($l->$val, true))){
+                         //dd(in_array($libele[$val],json_decode($l->$val, true)));
                           $j++;
-                            if($j == count($keys[$index])){
-                                echo $index;
+                         //echo '<strong>'.$j.'</strong>';
+                           if($j == count($keys[$index])){
+                                
                               if(isset($res_libel[$index]) && !empty( $res_libel[$index])){
                                    $res_libel[$index]=intval($res_libel[$index])+1;
                                    $j=0;
@@ -508,41 +514,24 @@ class ProjetsController extends Controller
                           }
                       }
                   }
+                 
               }
               $j=0;
+             
           }
+          
 
 
       }
     }
-    dd($res_libel);
-      * 
-      */
-        dd($libeles);
-        $m = 0;
-     foreach ($r as $l ){
-         foreach($keys as $k){
-             foreach($libeles as $index => $v){
-                 foreach($v as $cle => $val){
-                     foreach ($k as $c){
-                        if($l->$c == $val){
-                            $m++;
-                        }elseif (is_array($l->$c)) {
-                            foreach($l->$c as $value){
-                                dd($value);
-                            }
-                        }
-                     }
-                 }
-             }
-         }
-     }
-     dd($m);
-            return view('reponse',  compact(['projet', 'r', 'champs', 'names','options', 'comparer', 'res_libel']));
+     //dd($res_libel);
+    $nb_rep = DB::table($projet->reponses_table)->count();
+    //dd($nb_rep);
+     
+            return view('reponse',  compact(['projet', 'r', 'champs', 'names','options', 'comparer', 'res_libel','nb_rep','libeles']));
     
         }
     
-    }
     
     
     public function libeles($res_libel, $j, $index, $keys) {
