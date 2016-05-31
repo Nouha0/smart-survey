@@ -13,6 +13,9 @@ use DB ;
 
 class ProjetsController extends Controller
 {
+    public function __construct() {
+        $this->middleware('role:admin');
+    }
     public $colonnes;
     
     public function getColonnes()
@@ -24,7 +27,7 @@ class ProjetsController extends Controller
         $this->colonnes=$c;
     }  
 
-        public function index()
+    public function index()
     {
         $projets = Projet::all();
         $clients = Client::lists('nom', 'id');
@@ -164,48 +167,50 @@ class ProjetsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $projet = Projet::findOrFail($id);
-        
-        $elements = $request->list_champs;
-        
-        $table= array();
-        if(!empty($elements)){
-            foreach ($elements as $k => $v){
-                array_push($table,$k);
-            }
-        }
-        
-        $projet->nom = $request->nom;
-        
-        $projet->nombre_max = $request->nombre_max;
-        
-        $projet->list_champs = json_encode($table);
-        
-        $projet->clients()->sync($request->clients);
-        
-        $projet->enqueteurs()->sync($request->enqueteurs);
-        
-        $projet->administrateurs()->sync($request->administrateurs);
-        
-        $projet->update();
+         $validateur = \Validator::make($request->all(),[
+                       'nom'=>'required',
+                       'projet_start'=> 'required|date',
+                       'projet_end' => 'required|date',
+                       'nombre_max'=>'required|integer',
+                       'list_champs' => 'required',         
+         ]);
          
-        return redirect()->back();
+         if($validateur->fails()){
+             
+             return redirect()->back()->withErrors($validateur->errors());
+             
+         }  
+         else {
+             $projet = Projet::findOrFail($id);
+        
+            $elements = $request->list_champs;
+
+            $table= array();
+            if(!empty($elements)){
+                foreach ($elements as $k => $v){
+                    array_push($table,$k);
+                }
+            }
+
+            $projet->nom = $request->nom;
+
+            $projet->nombre_max = $request->nombre_max;
+
+            $projet->list_champs = json_encode($table);
+
+            $projet->clients()->sync($request->clients);
+
+            $projet->enqueteurs()->sync($request->enqueteurs);
+
+            $projet->administrateurs()->sync($request->administrateurs);
+
+            $projet->update();
+
+            return redirect()->back();
+         }
+        
     }
     
-    public function deleteLiaison($id,$id2){
-         
-       $projet = Projet::find($id); 
-       
-       $projet->clients()->detach([$id2]);
-     
-       $projet->enqueteurs()->detach([$id2]);
-
-       $projet->administrateurs()->detach([$id2]);
-        
-        
-        return 'true';
-    }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -293,25 +298,31 @@ class ProjetsController extends Controller
     }
     
     public function buildGraphPut(Request $request){
-        $projet = Projet::findOrFail($request->id);
-        //dd($request);
-        $elements = $request->names;
-        
-        $champs = array();
-        if(!empty($elements )){
-            foreach ($elements as $k=>$v){
-                array_push($champs, $k);
-            }
-        }
+        $validateur = \Validator::make($request->all(),[
+                       'names' => 'required'         
+         ]);
+        if($validateur->fails()){
+            return redirect()->back()->withErrors($validateur->errors());
+        }  else {
+            $projet = Projet::findOrFail($request->id);
+            //dd($request);
+            $elements = $request->names;
 
-        $projet->list_champs = json_encode($champs);
-        $projet->champs_croises =$this->requestJson($request->champs_croises);
-        $projet->libelles = $this->requestJson($request->libelles);
-        
-        $projet->update();
-        
-        return redirect(route('all-projet'));
-        
+            $champs = array();
+            if(!empty($elements )){
+                foreach ($elements as $k=>$v){
+                    array_push($champs, $k);
+                }
+            }
+
+            $projet->list_champs = json_encode($champs);
+            $projet->champs_croises =$this->requestJson($request->champs_croises);
+            $projet->libelles = $this->requestJson($request->libelles);
+
+            $projet->update();
+
+            return redirect(route('all-projet'));
+        } 
     }
     public function requestJson($json){
         $l = array();
@@ -414,23 +425,41 @@ class ProjetsController extends Controller
    
      foreach($list_compare as $comparaison){
           foreach($comparaison as $obj_1 => $obj_2){
-            echo ($obj_1 .' '. $obj_2.'<br>');
             foreach($compare[$obj_1] as $k=>$v){
                 $comparer[$obj_1.'-'.$obj_2][$k]= $compare[$obj_2]; 
             }
           }
      }
      
-     //dd($comparer);
-   
+    
      foreach($r as $l){
         foreach($list_compare as $comparaison){
             foreach($comparaison as $obj_1 => $obj_2){
                 if(!empty($l->$obj_1) && !empty($l->$obj_2)){
-                     if(is_array(json_decode($this->phr($l->$obj_1, true)))){
-                         foreach (json_decode($this->phr($l->$obj_1), true) as $table){
-                            if(isset($comparer[$obj_1.'-'.$obj_2][$table][$this->phr($l->$obj_2)])){
-                                 $comparer[$obj_1.'-'.$obj_2][$table][$this->phr($l->$obj_2)] = intval($comparer[$obj_1.'-'.$obj_2][$table][$this->phr($l->$obj_2)])+1;
+                    if(is_array(json_decode($l->$obj_1, true)) && !is_array(json_decode($l->$obj_2, true)) ){
+                         $obj = json_decode($l->$obj_1, true);
+                         foreach ($obj as $table){
+                            if(isset($comparer[$obj_1.'-'.$obj_2][$table][$l->$obj_2])){
+                                 $comparer[$obj_1.'-'.$obj_2][$table][$l->$obj_2] = intval($comparer[$obj_1.'-'.$obj_2][$table][$l->$obj_2])+1;
+                            }
+                         }
+                     }
+                     elseif(!is_array(json_decode($l->$obj_1, true)) && is_array(json_decode($l->$obj_2, true))){
+                         $obj = json_decode($l->$obj_2, true);
+                         foreach ($obj as $table){
+                            if(isset($comparer[$obj_1.'-'.$obj_2][$l->$obj_1][$table])){
+                                 $comparer[$obj_1.'-'.$obj_2][$l->$obj_1][$table] = intval($comparer[$obj_1.'-'.$obj_2][$l->$obj_1][$table] )+1;
+                            }
+                         }
+                     }
+                     elseif(is_array(json_decode($l->$obj_1, true)) && is_array(json_decode($l->$obj_2, true))){
+                         $obj_de_1 = json_decode($l->$obj_1, true);
+                         $obj_de_2 = json_decode($l->$obj_2, true);
+                         foreach ($obj_de_1 as $table_1){
+                            foreach ($obj_de_2 as $table_2){
+                               if(isset($comparer[$obj_1.'-'.$obj_2][$table_1][$table_2])){
+                                    $comparer[$obj_1.'-'.$obj_2][$table_1][$table_2] = intval($comparer[$obj_1.'-'.$obj_2][$table_1][$table_2] )+1;
+                               }
                             }
                          }
                      }
@@ -444,7 +473,7 @@ class ProjetsController extends Controller
             
         }
      }
-     
+    
 
      /*
      *Libélé sous la forme [0=>['genre'=>Homme, 'chocolat'=>jaime, 'ville'=>Tunis, 'travail'=>oui]]
@@ -482,17 +511,18 @@ class ProjetsController extends Controller
                     if($j == count($keys[$index])){
                             //echo $index;
                         
-                          if(isset($res_libel[$index]) && !empty( $res_libel[$index])){
-
-                               $res_libel[$index]=intval($res_libel[$index])+1;
-                               //$j=0;
+                          if(isset($res_libel[implode(' - ', $libele)]) && !empty( $res_libel[implode(' - ', $libele)])){
+                              //dd(implode(' - ', $libele));
+                               $res_libel[implode(' - ', $libele)]=intval($res_libel[implode(' - ', $libele)])+1;
+                               $j=0;
                           }
-                          else {
-                              $res_libel[$index]=1;
-                              //$j=0;
-                          }
+                          else{
+                                  $res_libel[implode(' - ', $libele)]=1;
+                                  $j=0;
+                              }
+                              
                           
-                      }
+                        }
                   }
                   elseif(is_array(json_decode($l->$val, true))){
                       //dd(is_array(json_decode($l->$val, true)));
@@ -502,18 +532,18 @@ class ProjetsController extends Controller
                          //echo '<strong>'.$j.'</strong>';
                            if($j == count($keys[$index])){
                                 
-                              if(isset($res_libel[$index]) && !empty( $res_libel[$index])){
-                                   $res_libel[$index]=intval($res_libel[$index])+1;
+                              if(isset($res_libel[implode(' - ', $libele)]) && !empty( $res_libel[implode(' - ', $libele)])){
+                                   $res_libel[implode(' - ', $libele)]=intval($res_libel[implode(' - ', $libele)])+1;
                                    $j=0;
                               }
                               else {
-                                  $res_libel[$index]=1;
+                                  $res_libel[implode(' - ', $libele)]=1;
                                   $j=0;
-                              }
-                              
-                          }
+                              } 
+                          } 
                       }
                   }
+                  
                  
               }
               $j=0;
@@ -524,11 +554,13 @@ class ProjetsController extends Controller
 
       }
     }
-     //dd($res_libel);
+    //dd($keys);
+    //dd($res_libel);
     $nb_rep = DB::table($projet->reponses_table)->count();
     //dd($nb_rep);
-     
-            return view('reponse',  compact(['projet', 'r', 'champs', 'names','options', 'comparer', 'res_libel','nb_rep','libeles']));
+    
+   
+            return view('reponse',  compact(['projet', 'r', 'champs', 'names','options', 'comparer', 'res_libel','nb_rep','libeles','nom']));
     
         }
     

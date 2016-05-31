@@ -33,9 +33,19 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($request)
     {
-        //
+        $user= new User();
+        if(empty($request->password)){
+            $pass=bcrypt(000000);
+        }
+        else {
+             $user->nom=$request->nom; 
+        }
+        $user->email=$request->email;
+        $user->password=$pass;
+        
+        return $user;
     }
 
     /**
@@ -46,22 +56,15 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        $pass=bcrypt($request->password);
-        $user= new User();
-        $user->name=$request->name;
-        $user->email=$request->email;
-        $user->password=$pass;
-        //dd($user);
+        
+        $user = $this->create($request);
         $roles = Role::lists('id');
         $user->save();
-        
      
         foreach($roles as $r){
              $user->roles()->attach($r);
         }
        
-        
-
         return redirect('login');
 
     }

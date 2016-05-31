@@ -68,7 +68,7 @@ class AuthController extends Controller
     {
 
         //dd($permissions);
-        $role=Role::find(1);
+        $role=Role::find(2);
          $user=User::create([
             'name' => $data['name'],
             'email' => $data['email'],

@@ -11,7 +11,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'nom', 'email', 'password',
     ];
     /**
      * The attributes excluded from the model's JSON form.
@@ -23,6 +23,18 @@ class User extends Authenticatable
     ];
     
     public function roles(){
-        return $this->belongsToMany('App\Role');
+        return $this->hasOne('App\Role');
+    }
+    
+    public function client(){
+        return $this->hasOne('App\Client');
+    }
+    
+    public function administrateur(){
+        return $this->hasOne('App\Administrateur');
+    }
+    
+    public function enqueteur(){
+        return $this->hasOne('App\Enqueteur');
     }
 }

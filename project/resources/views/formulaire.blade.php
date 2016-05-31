@@ -8,7 +8,8 @@
 @endsection
 
 @section('content')
-   
+       <div class="panel panel-default">
+        <div class="panel-body">
         <div class="fb-main">
            
         </div>
@@ -19,7 +20,8 @@
                 <br />
                 <button class="btn btn-success pull-right" type="submit">créer le formulaire</button>
             {!! Form::close() !!}
-    
+        </div>
+       </div>
 @endsection
 @section('js')
     <script src="{{url('project/resources/assets/plugins/formbuilder/vendor/js/vendor.js')}}"></script>

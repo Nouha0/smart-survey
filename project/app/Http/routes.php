@@ -23,10 +23,11 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/ajout-user',['as'=>'add-user','uses'=>'UsersController@store'] );
     Route::get('/', 'HomeController@index');
 });
+/*
 Route::group(['middleware'=>'web'],  function (){
-   /* Route::get('/signin',['as'=>'signin','uses'=>'UserController@index']);
-    Route::get('/register',['as'=>'register','uses'=>'UserController@register']);*/
-});
+   Route::get('/signin',['as'=>'signin','uses'=>'UsersController@index']);
+    Route::get('/register',['as'=>'register','uses'=>'UsersController@register']);
+});*/
 //group of projets
 Route::group(['prefix'=>'projets','middleware' => ['web']], function () {
     Route::get('/affiche-projet',['as'=>'affiche-projet','uses'=>'ProjetsController@index'] );
@@ -36,19 +37,11 @@ Route::group(['prefix'=>'projets','middleware' => ['web']], function () {
     Route::get('/modif-projet/{id}',['as'=>'edit-projet','uses'=>'ProjetsController@edit'] );
     Route::get('/formulaire/{id}',['as'=>'formulaire','uses'=>'ProjetsController@show']);
     Route::put('/maj-formulaire',['as'=>'put-formulaire','uses'=>'ProjetsController@put']);
-    //Route::get('/select-formulaire',['as'=>'select-formulaire','uses'=>'ProjetsController@show']);
     Route::get('/tous-projet',['as'=>'all-projet','uses'=>'ProjetsController@affiche']);
-    Route::get('supp-liaisonP/{id}/{id2}',['as'=>'delete-liaisonP','uses'=>'ProjetsController@deleteLiaison']);
-    //Route::post('/creerTable/{id}',['as'=>'creeTable','uses'=>'ProjetsController@createTableP']);
     Route::get('reponse/{id}',['as'=>'reponse', 'uses'=>'ProjetsController@VoirReponse']);
-    
     Route::get('build-graph/{id}',['as'=>'build-graph','uses'=>'ProjetsController@buildGraph']);
     Route::put('build-graph-put',['as'=>'graph-put-formulaire','uses'=>'ProjetsController@buildGraphPut']);
-    
     Route::get('dupliquer-projet/{id}',['as'=>'dupliquer-projet','uses'=>'ProjetsController@dupliquer']);
-
-    
-
 });
 //group of clients
 Route::group(['prefix'=>'clients','middleware'=>['web']],  function (){
@@ -57,7 +50,6 @@ Route::group(['prefix'=>'clients','middleware'=>['web']],  function (){
     Route::put('/maj-client/{id}',['as'=>'update-client','uses'=>'ClientsController@update']);
     Route::post('/supp-client',['as'=>'delete-client','uses'=>'ClientsController@destroy']);
     Route::get('/modif-client/{id}',['as'=>'edit-client','uses'=>'ClientsController@edit'] );
-    Route::get('supp-liaisonC/{id}/{id2}',['as'=>'delete-liaisonC','uses'=>'ClientsController@deleteLiaison']);
     Route::get('/Tous-client',['as'=>'all-client','uses'=>'ClientsController@affiche']);
     Route::get('/list_p/{id}',['as'=>'list_p','uses'=>'ClientsController@list_p']);
 });
@@ -74,7 +66,6 @@ Route::group(['prefix'=>'enqueteurs','middleware'=>['web']],function(){
     Route::post('/delete-enqueteur',['as'=>'delete-enqueteur','uses'=>'EnqueteursController@destroy']);
     Route::get('/edit-enqueteur/{id}',['as'=>'edit-enqueteur','uses'=>'EnqueteursController@edit'] );
     Route::get('/html/{id}/{id2}',['as'=>'html','uses'=>'EnqueteursController@html']);
-    Route::get('delete-liaisonE/{id}/{id2}',['as'=>'delete-liaisonE','uses'=>'EnqueteursController@deleteLiaison']);
     Route::get('/all-enqueteur',['as'=>'all-enqueteur','uses'=>'EnqueteursController@affiche']);
     Route::get('liste-projet/{id}',['as'=>'liste-projet','uses'=>'EnqueteursController@liste_projet']);
     Route::post('add-reponse/{id}/{id2}',['as'=>'add-reponse','uses'=>'EnqueteursController@add_reponse']);
@@ -87,7 +78,6 @@ Route::group(['prefix'=>'administrateur','middleware'=>['web']],function(){
     Route::put('/update-administrateur/{id}',['as'=>'update-administrateur','uses'=>'AdministrateursController@update']);
     Route::post('/delete-administrateur',['as'=>'delete-administrateur','uses'=>'AdministrateursController@destroy']);
     Route::get('/edit-administrateur/{id}',['as'=>'edit-administrateur','uses'=>'AdministrateursController@edit'] );
-    Route::get('delete-liaisonA/{id}/{id2}',['as'=>'delete-liaisonA','uses'=>'AdministrateursController@deleteLiaison']);
     Route::get('/all-admin',['as'=>'all-admin','uses'=>'AdministrateursController@affiche']);
     Route::get('liste-form/{id}',['as'=>'list-form','uses'=>'AdministrateursController@list_form']);
 });

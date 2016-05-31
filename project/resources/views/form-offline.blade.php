@@ -1,8 +1,20 @@
-@extends('Default')
+<!DOCTYPE html>
+<html>
+<!-- Mirrored from juanproject.org/myxdashboard/forms.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 05 Apr 2016 21:58:55 GMT -->
+<head>
+  <title>MYX Dashboard</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-@section('title','remplir le formulaire')
+ 
+    {!! Html::style('project/resources/assets/dist/css/bootstrap.css') !!}
 
-@section('content')
+ 
+  
+
+</head>
+<body>
+
     {!! Form::open(['method'=>'POST','url'=>route('add-reponse',[$enqueteur->id,$projet->id])]) !!}
         
             <div id="box">
@@ -12,8 +24,16 @@
             <button type="submit" class="btn btn-success">envoyé</button>
        
     {!! Form::close() !!}
-@endsection
+    
+    
+    <script src="{{url('project/resources/assets/js/jquery.min.js')}}"></script>
+    <script src="{{url('project/resources/assets/js/bootstrap.js')}}"></script>
+    
+    <script type="text/javascript" src="{{url('project/resources/assets/js/mustache/mustache.min.js}}"></script>
 
+     
+    
+    
 @section('js')
   
     
@@ -116,4 +136,19 @@
        
     </script>
 @endsection
+     
+    
+    <script type="text/javascript">
+         if(!navigator.onLine){
+            $('.send_quotation').on('click', function(e){
+                 e.preventDefault();
+                 console.log("not connected");
+                 storeDevisOffline(contenu_new_customer);
+             });
+         }
+    </script>
+@yield('js')
+    </body>
+</html>
+
 

@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 
 use App\Administrateur;
-
+Use App\Http\Controllers\UsersController;
 use App\Projet;
-
+Use App\Role;
+Use App\User;
 use DB;
 
 class AdministrateursController extends Controller
@@ -22,8 +23,8 @@ class AdministrateursController extends Controller
     public function index()
     {
         $administrateurs = Administrateur::all();
-        
         $projets = Projet::Lists('nom','id');
+        
         
         return view('administrateur',  compact(['administrateurs','projets']));
     }
@@ -36,10 +37,10 @@ class AdministrateursController extends Controller
     public function create(Request $request)
     {
         $administrateur = new Administrateur();
-        
+      
         $administrateur->nom = $request->nom;
-        $administrateur->mail = $request->mail;
-        //$administrateurs->created_by = $request->created_by;
+        $administrateur->email = $request->email;
+        
         
         return $administrateur;
     }
@@ -52,19 +53,21 @@ class AdministrateursController extends Controller
      */
     public function store(Request $request)
     {
-        $administrateurs = $this->create($request);
-        
-       
-     
         $validateur = \Validator::make($request->all(),[
                        'nom'=>'required',
-                       'mail'=> 'required|email|max:255'
+                       'email'=> 'required|email|max:255'
         ]);
         if($validateur->fails()){
             return redirect()->back()->withErrors($validateur->errors());
         }else{
-             $administrateurs->save();
-        
+            
+            $administrateurs = $this->create($request);
+            $administrateurs->save();
+            $user = new UsersController();
+            $user = $user->create($request);
+            var_dump($user);
+            $user->save();
+            $user->role->attach($request->roles);
             $administrateurs->projets()->attach($request->projets);
             return redirect(route('affiche-administrateur'));
         }
@@ -108,13 +111,7 @@ class AdministrateursController extends Controller
      */
     public function update(Request $request, $id)
     {
-       $administrateur =  Administrateur::findOrFail($id);
        
-       $administrateur->nom = $request->nom;
-       
-       $administrateur->mail = $request->mail;
-       
-       $administrateur->projets()->sync($request->projets);
        
         $validateur = \Validator::make($request->all(),[
                        'nom'=>'required',
@@ -123,6 +120,14 @@ class AdministrateursController extends Controller
          if($validateur->fails()){
              return redirect()->back()->withErrors($validateur->errors());
          }else{
+                $administrateur =  Administrateur::findOrFail($id);
+       
+                $administrateur->nom = $request->nom;
+
+                $administrateur->mail = $request->mail;
+
+                $administrateur->projets()->sync($request->projets);
+                
                 $administrateur->update();
        
                 return redirect(route('all-admin'));

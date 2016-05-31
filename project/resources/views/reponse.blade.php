@@ -3,18 +3,25 @@
 @section('title','Réponses')
 
 @section('content')
- @foreach($libeles as $lib)
+ 
+@foreach($res_libel as $res => $val)
+ 
 <div class="col-md-4">
     <div class="panel panel-default">
         <div class="panel-body no-padding libeles">
-        @foreach($res_libel as $res)
-        <h5>{{$res}}  <span>{{$res / $nb_rep *100}} %</span></h5>
-        @endforeach
-        <p>{{implode(' - ',$lib)}}</p>
-        </div>
+        
+        <h5>{{$val}}  <span>{{number_format($val / $nb_rep *100,2,',',' ')}}%</span></h5>
+        
+        <p>{{$res}}</p>
+        
+        
+        </div> 
     </div>
+  
 </div>
- @endforeach
+ 
+ @endforeach 
+
 <div class="clearfix"></div>
 <div class="col-md-12">
             
@@ -28,7 +35,7 @@
 
                 <div class="panel-body">
 
-                 <table class="table table-striped table-bordered table-hover dataTables-example" >
+                 <table class="table table-striped table-bordered table-hover dataTables-example">
                      <thead>
                         <tr>
                             <th>ID</th>

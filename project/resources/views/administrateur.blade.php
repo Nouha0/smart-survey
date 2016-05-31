@@ -15,22 +15,33 @@
             </ul>
         </div>
     @endif
-        <div class="form-group">
+        
             <div class="row">
                 <div class="col-md-8">
                     {!! Form::open(['method'=>'POST','url'=>route('add-administrateur')]) !!}
+                       <div class="form-group">
                         {!! Form::label('', 'Nom') !!}
                         {!! Form::text('nom', null,['placeholder'=>'nom', 'class'=>'form-control'] ) !!}
-                        
+                        </div>
+                     <div class="form-group">
                         {!! Form::label('','Mail') !!}
-                        {!! Form::text('mail',null,['placeholder'=>'mail', 'class'=>'form-control']) !!}
-                        
+                        {!! Form::text('email',null,['placeholder'=>'Mail', 'class'=>'form-control']) !!}
+                     </div>
+                     <div class="form-group">
                         {!! Form::label('', 'Projets') !!}
                         {!! Form::select('projets[]', $projets,null,['multiple'=>true ,'class'=>'form-control'] ) !!}
+                     </div>
+                    <div class="form-group">
+                        {!! Form::label('', 'Role') !!}
+                        <select name="roles">
+                            <option value="2">Administrateur</option>
+                            <option value="1">Administrateur / Superviseur</option>
+                        </select>
+                    </div>
                         <br />
                         <button type="submit" class="btn btn-success">envoyer</button>
                     {!! Form::close() !!}
-                </div>
+                
             </div>
         </div>
         <div class="col-md-8">

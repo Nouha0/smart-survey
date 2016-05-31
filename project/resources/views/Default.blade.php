@@ -24,6 +24,10 @@
     {!! Html::style('project/resources/assets/plugins/formbuilder/vendor/css/vendor.css') !!}
     {!! Html::style('project/resources/assets/plugins/formbuilder/dist/formbuilder.css') !!}
     
+     {!! Html::style('project/resources/assets/dist/css/dataTables.bootstrap.css') !!}
+     {!! Html::style('project/resources/assets/dist/css/tables.css') !!}
+     
+    
     
 
 

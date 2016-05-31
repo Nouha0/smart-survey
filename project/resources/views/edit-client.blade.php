@@ -3,6 +3,17 @@
 @section('title','Modification clients')
 
 @section('content')
+@if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach($errors->all() as $error)
+                <li>
+                    {{$error}}
+                </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 {!! Form::model($client,['method'=>'PUT','url'=>route('update-client',$client->id)]) !!}
     <div class="col-md-8"> 
         <div class="row">

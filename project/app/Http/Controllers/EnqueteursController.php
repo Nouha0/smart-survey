@@ -51,24 +51,24 @@ class EnqueteursController extends Controller
      */
     public function store(Request $request)
     {
-        
-        $enqueteurs = $this->create($request);
-        
-       
-        
          $validateur = \Validator::make($request->all(),[
                        'nom'=>'required',
                        'mail'=> 'required|email|max:255',
          ]);
+         
          if($validateur->fails()){
+             
              return redirect()->back()->withErrors($validateur->errors());
+         
          }else{
+             $enqueteurs = $this->create($request);
+             
              $enqueteurs->save();
+             
              $enqueteurs->projets()->attach($request->projets);
+             
              return redirect(route('affiche-enqueteur')) ;
-         }
-        
-        
+         }   
     }
 
     /**
@@ -113,39 +113,34 @@ class EnqueteursController extends Controller
      */
    public function update(Request $request, $id)
     {
-        
-        $enqueteur = Enqueteur::findOrFail($id);
-       
-        $enqueteur->nom = $request->nom;
-        
-        $enqueteur->mail = $request->mail;
-        
-        $enqueteur->photo = Controller::storeUpload('photo');
-        
-        $enqueteur->projets()->sync($request->projets);
-        
-         $validateur = \Validator::make($request->all(),[
+        $validateur = \Validator::make($request->all(),[
                        'nom'=>'required',
                        'mail'=> 'required|email|max:255',
                        'photo'=>'image',
          ]);
+       
          if($validateur->fails()){
+             
              return redirect()->back()->withErrors($validateur->errors());
+             
          }else{
-            $enqueteur->update();
+              $enqueteur = Enqueteur::findOrFail($id);
+       
+              $enqueteur->nom = $request->nom;
 
-            return redirect(route('all-enqueteur'));
+              $enqueteur->mail = $request->mail;
+
+              $enqueteur->photo = Controller::storeUpload('photo');
+
+              $enqueteur->projets()->sync($request->projets);
+              
+              $enqueteur->update();
+
+              return redirect(route('all-enqueteur'));
          }
         
     }
     
-    public function deleteLiaison($id,$id2){
-         
-       
-        Enqueteur::findOrFail($id)->projets()->detach([$id2]);
-         
-        return 'true';
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -203,10 +198,7 @@ class EnqueteursController extends Controller
             }
         }
         if(Schema::hasTable($projet->reponses_table)){
-            //$nb_reponses = DB::table($projet->reponses_table)->count();
-        
-            //$nombre_max = $projet->nombre_max;
-
+           
             $this->submitAll($request, $projet->reponses_table, $champs );
             
         }

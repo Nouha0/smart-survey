@@ -49,23 +49,23 @@ class clientsController extends Controller
      */
     public function store(Request $request)
     {
-        
-        $client = $this->create($request);
-        
-        
-       
         //$client->firstOrCreate(['mail'=> $request->mail]);
         $validateur = \Validator::make($request->all(),[
                        'nom'=>'required',
                        'mail'=> 'required|email|max:255'
          ]);
          if($validateur->fails()){
+             
              return redirect()->back()->withErrors($validateur->errors());
+         
          }else{
+             $client = $this->create($request);
+             
              $client->save();
-        
+             
              $client->projets()->attach($request->projets);
-            return redirect(route('affiche-client'));
+             
+             return redirect(route('affiche-client'));
          }
     }
 
@@ -109,38 +109,33 @@ class clientsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $client = Client::findOrFail($id);
-        
-        $client->nom = $request->nom;
-        
-        $client->mail = $request->mail;
-        
-        $client->photo = Controller::storeUpload('photo');
-        
-        $client->projets()->sync($request->projets);
-        
          $validateur = \Validator::make($request->all(),[
                        'nom'=>'required',
-                       'mail'=> 'required|email|max:255'
+                       'mail'=> 'required|email|max:255',
+                       
          ]);
+         
          if($validateur->fails()){
+             
              return redirect()->back()->withErrors($validateur->errors());
+             
          }else{
+              $client = Client::findOrFail($id);
         
-                $client->update();
+              $client->nom = $request->nom;
+
+              $client->mail = $request->mail;
+
+              $client->photo = Controller::storeUpload('photo');
+
+              $client->projets()->sync($request->projets);
+              
+              $client->update();
         
-                return redirect(route('all-client')); 
+              return redirect(route('all-client')); 
          }
     }
     
-    public function deleteLiaison($id,$id2){
-         
-       
-        Client::find($id)->projets()->detach([$id2]);
-         
-        return 'true';
-    }
-
     /**
      * Remove the specified resource from storage.
      *

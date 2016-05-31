@@ -8,96 +8,94 @@
 @endsection
 
 @section('content')
-   
-        <div class="fb-main">
-           
-        </div>
-             
-            <div class="panel panel-default">
-               
-               
-
-                <div class="panel-body">
-        
-         {!! Form::model($projet,['method'=>'PUT','url'=>route('graph-put-formulaire')]) !!} 
-         <label>Voir dans les statistiques</label>
-            @foreach($champs as $k=>$v)
-             <div class="form-group">
-                 <div class="checkbox i-checks"><label> 
-                         <input type="checkbox" name="names[{{$k}}]"><i></i> {{$v}}
-                 </div>
-                 
-             </div>
-            @endforeach
-            <hr>
-            <div class="input-croise">
-                
-            </div> 
-
-
-            <label>Champs croisés</label>
-            <div class="row">
-                <div class="col-md-2">
-                 <div class="form-group">
-                    <select id="croise-1" class="form-control">
-                        @foreach($champs as $k=>$v)
-                            <option value="{{$k}}">{{$v}}</option>
-                         @endforeach
-                    </select>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                 <div class="form-group">
-                    <select id="croise-2" class="form-control">
-                        @foreach($champs as $k=>$v)
-                            <option value="{{$k}}">{{$v}}</option>
-                         @endforeach
-                    </select>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                <a href="" class="btn btn-info btn-sm" id="add-compare">Ajouter une comparaison</a>
-                </div>
-                
-            
-            
-                
-            </div>
-            <hr>
-            
-            <div class="input-libelles">
-                
-            </div> 
-            
-            <h5>libellés</h5>
-            <div class="affiche-libelles"></div>
-            <div class="row">
-                @foreach($libelles as $l => $vl)
-                <div class="col-md-2 col-sm-6">
-                    
-                    <div class="form-group">
-                        <select class="form-control libelles" name="{{$l}}">
-                            <option value="">{{$l}}</option>
- 
-                            @foreach($vl as $value)
-                                <option value="{{$value}}">{{$value}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    
-                </div>
+   @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach($errors->all() as $error)
+                <li>
+                    {{$error}}
+                </li>
                 @endforeach
-                <div class="col-md-12">
-                    <a href="" class="btn btn-info btn-sm get-libelles">Ajouter un libellé</a>
+            </ul>
+        </div>
+    @endif
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {!! Form::model($projet,['method'=>'PUT','url'=>route('graph-put-formulaire')]) !!} 
+                <label>Voir dans les statistiques</label>
+                @foreach($champs as $k=>$v)
+                    <div class="form-group">
+                        <div class="checkbox i-checks"><label> 
+                                <input type="checkbox" name="names[{{$k}}]"><i></i> {{$v}}
+                        </div>
+
+                    </div>
+                @endforeach
+                <hr>
+                <div class="input-croise">
+                
+                </div> 
+
+
+                <label>Champs croisés</label>
+                <div class="row">
+                    <div class="col-md-2">
+                     <div class="form-group">
+                        <select id="croise-1" class="form-control">
+                            @foreach($champs as $k=>$v)
+                                <option value="{{$k}}">{{$v}}</option>
+                             @endforeach
+                        </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                     <div class="form-group">
+                        <select id="croise-2" class="form-control">
+                            @foreach($champs as $k=>$v)
+                                <option value="{{$k}}">{{$v}}</option>
+                             @endforeach
+                        </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                    <a href="" class="btn btn-info btn-sm" id="add-compare">Ajouter une comparaison</a>
+                    </div>
                 </div>
-            </div> 
+                <hr>
             
-            <hr>
-            {!! Form::hidden('id',$projet->id,[]) !!}
-            <br />
-            <button class="btn btn-success" type="submit">Créer le type des graphes</button>
-        {!! Form::close() !!}
-                </div></div>
+                <div class="input-libelles">
+                
+                </div> 
+            
+                <h5>libellés</h5>
+                <div class="affiche-libelles"></div>
+                <div class="row">
+                    @foreach($libelles as $l => $vl)
+                        <div class="col-md-2 col-sm-6">
+
+                            <div class="form-group">
+                                <select class="form-control libelles" name="{{$l}}">
+                                    <option value="">{{$l}}</option>
+
+                                    @foreach($vl as $value)
+                                        <option value="{{$value}}">{{$value}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                        </div>
+                    @endforeach
+                    <div class="col-md-12">
+                        <a href="" class="btn btn-info btn-sm get-libelles">Ajouter un libellé</a>
+                    </div>
+                </div>
+                <hr>
+                {!! Form::hidden('id',$projet->id,[]) !!}
+                <br />
+                <button class="btn btn-success" type="submit">Créer le type des graphes</button>
+            {!! Form::close() !!}
+        </div>
+    </div>
 @endsection
 @section('js')
 <script type="text/javascript">

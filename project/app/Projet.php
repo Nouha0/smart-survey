@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Projet extends Model
 {
-    protected $fillable = ['name','projet_start','reponses_table','projet_html','projet_end','nombre_max','libelles','champs_croises'];
+    protected $fillable = ['nom','projet_start','reponses_table','projet_html','projet_end','nombre_max','libelles','champs_croises'];
      
     public function clients(){
         return $this->belongsToMany('App\Client');
